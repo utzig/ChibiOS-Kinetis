@@ -43,15 +43,15 @@ typedef struct {
   irq_vector_t  reset_vector;
   irq_vector_t  nmi_vector;
   irq_vector_t  hardfault_vector;
-  irq_vector_t  memmanage_vector;
-  irq_vector_t  busfault_vector;
-  irq_vector_t  usagefault_vector;
+  irq_vector_t  vector10;
+  irq_vector_t  vector14;
+  irq_vector_t  vector18;
   irq_vector_t  vector1c;
   irq_vector_t  vector20;
   irq_vector_t  vector24;
   irq_vector_t  vector28;
   irq_vector_t  svcall_vector;
-  irq_vector_t  debugmonitor_vector;
+  irq_vector_t  vector30;
   irq_vector_t  vector34;
   irq_vector_t  pendsv_vector;
   irq_vector_t  systick_vector;
@@ -63,15 +63,15 @@ extern uint32_t __main_stack_end__;
 extern void ResetHandler(void);
 extern void NMIVector(void);
 extern void HardFaultVector(void);
-extern void MemManageVector(void);
-extern void BusFaultVector(void);
-extern void UsageFaultVector(void);
+extern void Vector10(void);
+extern void Vector14(void);
+extern void Vector18(void);
 extern void Vector1C(void);
 extern void Vector20(void);
 extern void Vector24(void);
 extern void Vector28(void);
 extern void SVCallVector(void);
-extern void DebugMonitorVector(void);
+extern void Vector30(void);
 extern void Vector34(void);
 extern void PendSVVector(void);
 extern void SysTickVector(void);
@@ -117,9 +117,9 @@ __attribute__ ((section("vectors")))
 #endif
 vectors_t _vectors = {
   &__main_stack_end__,ResetHandler,       NMIVector,          HardFaultVector,
-  MemManageVector,    BusFaultVector,     UsageFaultVector,   Vector1C,
+  Vector10,           Vector14,           Vector18,           Vector1C,
   Vector20,           Vector24,           Vector28,           SVCallVector,
-  DebugMonitorVector, Vector34,           PendSVVector,       SysTickVector,
+  Vector30,           Vector34,           PendSVVector,       SysTickVector,
   {
     Vector40,           Vector44,           Vector48,           Vector4C,
     Vector50,           Vector54,           Vector58,           Vector5C,
@@ -150,15 +150,15 @@ void _unhandled_exception(void) {
 
 void NMIVector(void) __attribute__((weak, alias("_unhandled_exception")));
 void HardFaultVector(void) __attribute__((weak, alias("_unhandled_exception")));
-void MemManageVector(void) __attribute__((weak, alias("_unhandled_exception")));
-void BusFaultVector(void) __attribute__((weak, alias("_unhandled_exception")));
-void UsageFaultVector(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector10(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector14(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector18(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector1C(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector20(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector24(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector28(void) __attribute__((weak, alias("_unhandled_exception")));
 void SVCallVector(void) __attribute__((weak, alias("_unhandled_exception")));
-void DebugMonitorVector(void) __attribute__((weak, alias("_unhandled_exception")));
+void Vector30(void) __attribute__((weak, alias("_unhandled_exception")));
 void Vector34(void) __attribute__((weak, alias("_unhandled_exception")));
 void PendSVVector(void) __attribute__((weak, alias("_unhandled_exception")));
 void SysTickVector(void) __attribute__((weak, alias("_unhandled_exception")));
