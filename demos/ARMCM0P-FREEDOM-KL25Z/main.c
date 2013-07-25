@@ -52,10 +52,15 @@ static msg_t Thread2(void *arg) {
 }
 #endif
 
-static void RGB_LED(int r, int g, int b) {
-  TPM2->C0V  = r;
-  TPM2->C1V  = g;
-  TPM0->C1V  = b;
+static void RGB_LED(uint8_t r, uint8_t g, uint8_t b) {
+  if (r) GPIOB->PCOR |= (1 << 18);
+  else GPIOB->PSOR |= (1 << 18);
+
+  if (g) GPIOB->PCOR |= (1 << 19);
+  else GPIOB->PSOR |= (1 << 19);
+
+  if (b) GPIOD->PCOR |= (1 << 1);
+  else GPIOD->PSOR |= (1 << 1);
 }
 /*
  * Application entry point.
@@ -70,9 +75,7 @@ int main(void) {
    *   RTOS is active.
    */
   halInit();
-  RGB_LED(100, 0, 0);
   chSysInit();
-  RGB_LED(0, 100, 0);
 
   /*
    * Activates the serial driver 1 using the driver default configuration.
@@ -97,11 +100,11 @@ int main(void) {
   while (TRUE) {
     //if (palReadPad(GPIOA, GPIOA_BUTTON))
       //TestThread(&SD1);
-    RGB_LED(100, 0, 0);
+    RGB_LED(1, 0, 0);
     chThdSleepMilliseconds(500);
-    RGB_LED(0, 100, 0);
+    RGB_LED(0, 1, 0);
     chThdSleepMilliseconds(500);
-    RGB_LED(0, 0, 100);
+    RGB_LED(0, 0, 1);
     chThdSleepMilliseconds(500);
   }
 }
