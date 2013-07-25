@@ -26,8 +26,10 @@ __process_stack_size__  = 0x0400;
 
 MEMORY
 {
-    flash : org = 0x00000000, len = 128k
-    ram : org = 0x1FFFFF000, len = 16k
+  flash0   :  org = 0x00000000,  len = 0xc0
+  flashcfg :  org = 0x00000400,  len = 0x10
+  flash    :  org = 0x00000410,  len = 128k - 0x410
+  ram      :  org = 0x1FFFFF000, len = 16k
 }
 
 __ram_start__           = ORIGIN(ram);
@@ -38,111 +40,116 @@ ENTRY(ResetHandler)
 
 SECTIONS
 {
-    . = 0;
-    _text = .;
+  . = 0;
 
-    startup : ALIGN(16) SUBALIGN(16)
-    {
-        KEEP(*(vectors))
-    } > flash
+  .isr : ALIGN(4) SUBALIGN(4)
+  {
+    KEEP(*(vectors))
+  } > flash0
 
-    constructors : ALIGN(4) SUBALIGN(4)
-    {
-        PROVIDE(__init_array_start = .);
-        KEEP(*(SORT(.init_array.*)))
-        KEEP(*(.init_array))
-        PROVIDE(__init_array_end = .);
-    } > flash
+  .cfmprotect : ALIGN(4) SUBALIGN(4)
+  {
+    KEEP(*(.cfmconfig))
+  } > flashcfg
 
-    destructors : ALIGN(4) SUBALIGN(4)
-    {
-        PROVIDE(__fini_array_start = .);
-        KEEP(*(.fini_array))
-        KEEP(*(SORT(.fini_array.*)))
-        PROVIDE(__fini_array_end = .);
-    } > flash
+  _text = .;
 
-    .text : ALIGN(16) SUBALIGN(16)
-    {
-        *(.text.startup.*)
-        *(.text)
-        *(.text.*)
-        *(.rodata)
-        *(.rodata.*)
-        *(.glue_7t)
-        *(.glue_7)
-        *(.gcc*)
-    } > flash
+  constructors : ALIGN(4) SUBALIGN(4)
+  {
+    PROVIDE(__init_array_start = .);
+    KEEP(*(SORT(.init_array.*)))
+    KEEP(*(.init_array))
+    PROVIDE(__init_array_end = .);
+  } > flash
 
-    .ARM.extab :
-    {
-        *(.ARM.extab* .gnu.linkonce.armextab.*)
-    } > flash
+  destructors : ALIGN(4) SUBALIGN(4)
+  {
+    PROVIDE(__fini_array_start = .);
+    KEEP(*(.fini_array))
+    KEEP(*(SORT(.fini_array.*)))
+    PROVIDE(__fini_array_end = .);
+  } > flash
 
-    .ARM.exidx : {
-        PROVIDE(__exidx_start = .);
-        *(.ARM.exidx* .gnu.linkonce.armexidx.*)
-        PROVIDE(__exidx_end = .);
-     } > flash
+  .text : ALIGN(4) SUBALIGN(4)
+  {
+    *(.text)
+    *(.text.*)
+    *(.rodata)
+    *(.rodata.*)
+    *(.glue_7t)
+    *(.glue_7)
+    *(.gcc*)
+  } > flash
 
-    .eh_frame_hdr :
-    {
-        *(.eh_frame_hdr)
-    } > flash
+  .ARM.extab :
+  {
+    *(.ARM.extab* .gnu.linkonce.armextab.*)
+  } > flash
 
-    .eh_frame : ONLY_IF_RO
-    {
-        *(.eh_frame)
-    } > flash
+  .ARM.exidx : {
+    PROVIDE(__exidx_start = .);
+    *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+    PROVIDE(__exidx_end = .);
+   } > flash
 
-    .textalign : ONLY_IF_RO
-    {
-        . = ALIGN(8);
-    } > flash
+  .eh_frame_hdr :
+  {
+    *(.eh_frame_hdr)
+  } > flash
 
-    _etext = .;
-    _textdata = _etext;
+  .eh_frame : ONLY_IF_RO
+  {
+    *(.eh_frame)
+  } > flash
 
-    .stacks :
-    {
-        . = ALIGN(8);
-        __main_stack_base__ = .;
-        . += __main_stack_size__;
-        . = ALIGN(8);
-        __main_stack_end__ = .;
-        __process_stack_base__ = .;
-        __main_thread_stack_base__ = .;
-        . += __process_stack_size__;
-        . = ALIGN(8);
-        __process_stack_end__ = .;
-        __main_thread_stack_end__ = .;
-    } > ram
+  .textalign : ONLY_IF_RO
+  {
+    . = ALIGN(8);
+  } > flash
 
-    .data :
-    {
-        . = ALIGN(4);
-        PROVIDE(_data = .);
-        *(.data)
-        . = ALIGN(4);
-        *(.data.*)
-        . = ALIGN(4);
-        *(.ramtext)
-        . = ALIGN(4);
-        PROVIDE(_edata = .);
-    } > ram AT > flash
+  _etext = .;
+  _textdata = _etext;
 
-    .bss :
-    {
-        . = ALIGN(4);
-        PROVIDE(_bss_start = .);
-        *(.bss)
-        . = ALIGN(4);
-        *(.bss.*)
-        . = ALIGN(4);
-        *(COMMON)
-        . = ALIGN(4);
-        PROVIDE(_bss_end = .);
-    } > ram    
+  .stacks :
+  {
+    . = ALIGN(8);
+    __main_stack_base__ = .;
+    . += __main_stack_size__;
+    . = ALIGN(8);
+    __main_stack_end__ = .;
+    __process_stack_base__ = .;
+    __main_thread_stack_base__ = .;
+    . += __process_stack_size__;
+    . = ALIGN(8);
+    __process_stack_end__ = .;
+    __main_thread_stack_end__ = .;
+  } > ram
+
+  .data :
+  {
+    . = ALIGN(4);
+    PROVIDE(_data = .);
+    *(.data)
+    . = ALIGN(4);
+    *(.data.*)
+    . = ALIGN(4);
+    *(.ramtext)
+    . = ALIGN(4);
+    PROVIDE(_edata = .);
+  } > ram AT > flash
+
+  .bss :
+  {
+    . = ALIGN(4);
+    PROVIDE(_bss_start = .);
+    *(.bss)
+    . = ALIGN(4);
+    *(.bss.*)
+    . = ALIGN(4);
+    *(COMMON)
+    . = ALIGN(4);
+    PROVIDE(_bss_end = .);
+  } > ram
 }
 
 PROVIDE(end = .);
