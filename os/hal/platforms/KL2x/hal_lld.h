@@ -25,6 +25,8 @@
 #ifndef _HAL_LLD_H_
 #define _HAL_LLD_H_
 
+#include "kl25z.h"
+
 /*===========================================================================*/
 /* Driver constants.                                                         */
 /*===========================================================================*/
@@ -48,13 +50,6 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
-
-/*
- * Configuration-related checks.
- */
-#if !defined(PLATFORM_MCUCONF)
-#error "Using a wrong mcuconf.h file, PLATFORM_MCUCONF not defined"
-#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -105,6 +100,7 @@ typedef uint32_t halrtcnt_t;
 extern "C" {
 #endif
   void hal_lld_init(void);
+  void kl2x_clock_init(void);
 #ifdef __cplusplus
 }
 #endif

@@ -63,6 +63,28 @@ void _pal_lld_init(const PALConfig *config) {
 
   (void)config;
 
+#if 0
+  SIM->SCGC5 |=  0x00001400;
+  SIM->SCGC6 |=  0x05000000;
+  SIM->SOPT2 &= ~0x03000000;
+  SIM->SOPT2 |=  0x01000000;
+
+  PORTB->PCR18 = 0x00000300;  // TPM2_CH0 enable on PTB18 (red)
+  PORTB->PCR19 = 0x00000300;  // TPM2_CH1 enable on PTB19 (green)
+  PORTD->PCR1  = 0x00000400;  // TPM0_CH1 enable on PTD1  (blue)
+
+  TPM0->C1V  = 0;
+  TPM2->C0V  = 0;
+  TPM2->C1V  = 0;
+
+  TPM0->MOD  = 99;
+  TPM0->C1SC = 0x00000024;
+  TPM2->MOD  = 99;
+  TPM2->C0SC = 0x00000024;
+  TPM2->C1SC = 0x00000024;
+  TPM2->SC   = 0x00000008;
+  TPM0->SC   = 0x00000008;
+#endif
 }
 
 /**
