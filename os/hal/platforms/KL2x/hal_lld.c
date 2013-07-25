@@ -54,36 +54,14 @@
  *
  * @notapi
  */
-void hal_lld_init(void) {
-
+void hal_lld_init(void)
+{
   nvicSetSystemHandlerPriority(HANDLER_SYSTICK, CORTEX_PRIORITY_SYSTICK);
   SysTick->LOAD = 48000000 / CH_FREQUENCY - 1;
   SysTick->VAL = 0;
   SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk |
                   SysTick_CTRL_ENABLE_Msk |
                   SysTick_CTRL_TICKINT_Msk;
-
-  //FIXME
-  SIM->SCGC5 |=  0x00001400;
-  SIM->SCGC6 |=  0x05000000;
-  SIM->SOPT2 &= ~0x03000000;
-  SIM->SOPT2 |=  0x01000000;
-
-  PORTB->PCR[18] = 0x00000300;  // TPM2_CH0 enable on PTB18 (red)
-  PORTB->PCR[19] = 0x00000300;  // TPM2_CH1 enable on PTB19 (green)
-  PORTD->PCR[1]  = 0x00000400;  // TPM0_CH1 enable on PTD1  (blue)
-
-  TPM0->C1V  = 100;
-  TPM2->C0V  = 0;
-  TPM2->C1V  = 0;
-
-  TPM0->MOD  = 99;
-  TPM0->C1SC = 0x00000024;
-  TPM2->MOD  = 99;
-  TPM2->C0SC = 0x00000024;
-  TPM2->C1SC = 0x00000024;
-  TPM2->SC   = 0x00000008;
-  TPM0->SC   = 0x00000008;
 }
 
 /**
@@ -93,8 +71,8 @@ void hal_lld_init(void) {
  *
  * @special
  */
-void kl2x_clock_init(void) {
-
+void kl2x_clock_init(void)
+{
   /* Disable COP watchdog */
   SIM->COPC = 0;
 
@@ -142,16 +120,6 @@ void kl2x_clock_init(void) {
   MCG->C1 = 0x18;
   while ((MCG->S & 0x0C) != 0x0C)  /* wait until PLL output */
     ;
-
-  PORTB->PCR[18] &= 0x01000700;
-  PORTB->PCR[18] |= 0x00000100;
-  GPIOB->PDDR |=  (1 << 18);
-  GPIOB->PDOR &= ~(1 << 18);
-
-  PORTD->PCR[4]  &= 0x01000700;
-  PORTD->PCR[4]  |= 0x00000100;
-  GPIOD->PDDR |= (1 << 4);
-  GPIOD->PDOR &= ~(1 << 4);
 }
 
 /**
