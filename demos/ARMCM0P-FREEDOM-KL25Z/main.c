@@ -16,8 +16,9 @@
 
 #include "ch.h"
 #include "hal.h"
-#include "test.h"
+//#include "test.h"
 
+#if 0
 /*
  * Blue LED blinker thread, times are in milliseconds.
  */
@@ -27,9 +28,9 @@ static msg_t Thread1(void *arg) {
   (void)arg;
   chRegSetThreadName("blinker1");
   while (TRUE) {
-    palClearPad(GPIOC, GPIOC_LED4);
+    //palClearPad(GPIOC, GPIOC_LED4);
     chThdSleepMilliseconds(500);
-    palSetPad(GPIOC, GPIOC_LED4);
+    //palSetPad(GPIOC, GPIOC_LED4);
     chThdSleepMilliseconds(500);
   }
 }
@@ -43,13 +44,19 @@ static msg_t Thread2(void *arg) {
   (void)arg;
   chRegSetThreadName("blinker2");
   while (TRUE) {
-    palClearPad(GPIOC, GPIOC_LED3);
+    //palClearPad(GPIOC, GPIOC_LED3);
     chThdSleepMilliseconds(250);
-    palSetPad(GPIOC, GPIOC_LED3);
+    //palSetPad(GPIOC, GPIOC_LED3);
     chThdSleepMilliseconds(250);
   }
 }
+#endif
 
+static void RGB_LED(int r, int g, int b) {
+  TPM2->C0V  = r;
+  TPM2->C1V  = g;
+  TPM0->C1V  = b;
+}
 /*
  * Application entry point.
  */
@@ -63,21 +70,23 @@ int main(void) {
    *   RTOS is active.
    */
   halInit();
+  RGB_LED(100, 0, 0);
   chSysInit();
+  RGB_LED(0, 100, 0);
 
   /*
    * Activates the serial driver 1 using the driver default configuration.
    * PA9 and PA10 are routed to USART1.
    */
-  sdStart(&SD1, NULL);
-  palSetPadMode(GPIOA, 9, PAL_MODE_ALTERNATE(1));       /* USART1 TX.       */
-  palSetPadMode(GPIOA, 10, PAL_MODE_ALTERNATE(1));      /* USART1 RX.       */
+  //sdStart(&SD1, NULL);
+  //palSetPadMode(GPIOA, 9, PAL_MODE_ALTERNATE(1));       /* USART1 TX.       */
+  //palSetPadMode(GPIOA, 10, PAL_MODE_ALTERNATE(1));      /* USART1 RX.       */
 
   /*
    * Creates the blinker threads.
    */
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
-  chThdCreateStatic(waThread2, sizeof(waThread2), NORMALPRIO, Thread2, NULL);
+  //chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+  //chThdCreateStatic(waThread2, sizeof(waThread2), NORMALPRIO, Thread2, NULL);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except
@@ -86,8 +95,13 @@ int main(void) {
    * driver 1.
    */
   while (TRUE) {
-    if (palReadPad(GPIOA, GPIOA_BUTTON))
-      TestThread(&SD1);
+    //if (palReadPad(GPIOA, GPIOA_BUTTON))
+      //TestThread(&SD1);
+    RGB_LED(100, 0, 0);
+    chThdSleepMilliseconds(500);
+    RGB_LED(0, 100, 0);
+    chThdSleepMilliseconds(500);
+    RGB_LED(0, 0, 100);
     chThdSleepMilliseconds(500);
   }
 }
