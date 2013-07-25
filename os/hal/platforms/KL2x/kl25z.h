@@ -165,6 +165,35 @@ typedef struct
   __IO uint32_t PDDR;
 } GPIO_TypeDef;
 
+typedef struct
+{
+  __IO uint8_t  BDH;
+  __IO uint8_t  BDL;
+  __IO uint8_t  C1;
+  __IO uint8_t  C2;
+  __IO uint8_t  S1;
+  __IO uint8_t  S2;
+  __IO uint8_t  C3;
+  __IO uint8_t  D;
+  __IO uint8_t  C4;
+} UART_TypeDef;
+
+typedef struct
+{
+  __IO uint8_t  BDH;
+  __IO uint8_t  BDL;
+  __IO uint8_t  C1;
+  __IO uint8_t  C2;
+  __IO uint8_t  S1;
+  __IO uint8_t  S2;
+  __IO uint8_t  C3;
+  __IO uint8_t  D;
+  __IO uint8_t  MA1;
+  __IO uint8_t  MA2;
+  __IO uint8_t  C4;
+  __IO uint8_t  C5;
+} UARTLP_TypeDef;
+
 /****************************************************************/
 /*                  Peripheral memory map                       */
 /****************************************************************/
@@ -179,6 +208,9 @@ typedef struct
 #define PORTE_BASE              ((uint32_t)0x4004D000)
 #define MCG_BASE                ((uint32_t)0x40064000)
 #define OSC0_BASE               ((uint32_t)0x40065000)
+#define UART0_BASE              ((uint32_t)0x4006A000)
+#define UART1_BASE              ((uint32_t)0x4006B000)
+#define UART2_BASE              ((uint32_t)0x4006C000)
 #define GPIOA_BASE              ((uint32_t)0x400FF000)
 #define GPIOB_BASE              ((uint32_t)0x400FF040)
 #define GPIOC_BASE              ((uint32_t)0x400FF080)
@@ -188,22 +220,25 @@ typedef struct
 /****************************************************************/
 /*                 Peripheral declaration                       */
 /****************************************************************/
-#define TPM0                    ((TPM_TypeDef *)   TPM0_BASE)
-#define TPM1                    ((TPM_TypeDef *)   TPM1_BASE)
-#define TPM2                    ((TPM_TypeDef *)   TPM2_BASE)
-#define SIM                     ((SIM_TypeDef  *)  SIM_BASE)
-#define PORTA                   ((PORT_TypeDef  *) PORTA_BASE)
-#define PORTB                   ((PORT_TypeDef  *) PORTB_BASE)
-#define PORTC                   ((PORT_TypeDef  *) PORTC_BASE)
-#define PORTD                   ((PORT_TypeDef  *) PORTD_BASE)
-#define PORTE                   ((PORT_TypeDef  *) PORTE_BASE)
-#define MCG                     ((MCG_TypeDef  *)  MCG_BASE)
-#define OSC0                    ((OSC_TypeDef  *)  OSC0_BASE)
-#define GPIOA                   ((GPIO_TypeDef  *) GPIOA_BASE)
-#define GPIOB                   ((GPIO_TypeDef  *) GPIOB_BASE)
-#define GPIOC                   ((GPIO_TypeDef  *) GPIOC_BASE)
-#define GPIOD                   ((GPIO_TypeDef  *) GPIOD_BASE)
-#define GPIOE                   ((GPIO_TypeDef  *) GPIOE_BASE)
+#define TPM0                    ((TPM_TypeDef *)     TPM0_BASE)
+#define TPM1                    ((TPM_TypeDef *)     TPM1_BASE)
+#define TPM2                    ((TPM_TypeDef *)     TPM2_BASE)
+#define SIM                     ((SIM_TypeDef  *)    SIM_BASE)
+#define PORTA                   ((PORT_TypeDef  *)   PORTA_BASE)
+#define PORTB                   ((PORT_TypeDef  *)   PORTB_BASE)
+#define PORTC                   ((PORT_TypeDef  *)   PORTC_BASE)
+#define PORTD                   ((PORT_TypeDef  *)   PORTD_BASE)
+#define PORTE                   ((PORT_TypeDef  *)   PORTE_BASE)
+#define MCG                     ((MCG_TypeDef  *)    MCG_BASE)
+#define OSC0                    ((OSC_TypeDef  *)    OSC0_BASE)
+#define UART0                   ((UARTLP_TypeDef *)  UART0_BASE)
+#define UART1                   ((UART_TypeDef *)    UART1_BASE)
+#define UART2                   ((UART_TypeDef *)    UART2_BASE)
+#define GPIOA                   ((GPIO_TypeDef  *)   GPIOA_BASE)
+#define GPIOB                   ((GPIO_TypeDef  *)   GPIOB_BASE)
+#define GPIOC                   ((GPIO_TypeDef  *)   GPIOC_BASE)
+#define GPIOD                   ((GPIO_TypeDef  *)   GPIOD_BASE)
+#define GPIOE                   ((GPIO_TypeDef  *)   GPIOE_BASE)
 
 /****************************************************************/
 /*           Peripheral Registers Bits Definition               */
