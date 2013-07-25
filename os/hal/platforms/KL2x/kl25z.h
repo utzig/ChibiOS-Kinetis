@@ -188,22 +188,22 @@ typedef struct
 /****************************************************************/
 /*                 Peripheral declaration                       */
 /****************************************************************/
-#define TPM0                    ((volatile TPM_TypeDef *)   TPM0_BASE)
-#define TPM1                    ((volatile TPM_TypeDef *)   TPM1_BASE)
-#define TPM2                    ((volatile TPM_TypeDef *)   TPM2_BASE)
-#define SIM                     ((volatile SIM_TypeDef  *)  SIM_BASE)
-#define PORTA                   ((volatile PORT_TypeDef  *) PORTA_BASE)
-#define PORTB                   ((volatile PORT_TypeDef  *) PORTB_BASE)
-#define PORTC                   ((volatile PORT_TypeDef  *) PORTC_BASE)
-#define PORTD                   ((volatile PORT_TypeDef  *) PORTD_BASE)
-#define PORTE                   ((volatile PORT_TypeDef  *) PORTE_BASE)
-#define MCG                     ((volatile MCG_TypeDef  *)  MCG_BASE)
-#define OSC0                    ((volatile OSC_TypeDef  *)  OSC0_BASE)
-#define GPIOA                   ((volatile GPIO_TypeDef  *) GPIOA_BASE)
-#define GPIOB                   ((volatile GPIO_TypeDef  *) GPIOB_BASE)
-#define GPIOC                   ((volatile GPIO_TypeDef  *) GPIOC_BASE)
-#define GPIOD                   ((volatile GPIO_TypeDef  *) GPIOD_BASE)
-#define GPIOE                   ((volatile GPIO_TypeDef  *) GPIOE_BASE)
+#define TPM0                    ((TPM_TypeDef *)   TPM0_BASE)
+#define TPM1                    ((TPM_TypeDef *)   TPM1_BASE)
+#define TPM2                    ((TPM_TypeDef *)   TPM2_BASE)
+#define SIM                     ((SIM_TypeDef  *)  SIM_BASE)
+#define PORTA                   ((PORT_TypeDef  *) PORTA_BASE)
+#define PORTB                   ((PORT_TypeDef  *) PORTB_BASE)
+#define PORTC                   ((PORT_TypeDef  *) PORTC_BASE)
+#define PORTD                   ((PORT_TypeDef  *) PORTD_BASE)
+#define PORTE                   ((PORT_TypeDef  *) PORTE_BASE)
+#define MCG                     ((MCG_TypeDef  *)  MCG_BASE)
+#define OSC0                    ((OSC_TypeDef  *)  OSC0_BASE)
+#define GPIOA                   ((GPIO_TypeDef  *) GPIOA_BASE)
+#define GPIOB                   ((GPIO_TypeDef  *) GPIOB_BASE)
+#define GPIOC                   ((GPIO_TypeDef  *) GPIOC_BASE)
+#define GPIOD                   ((GPIO_TypeDef  *) GPIOD_BASE)
+#define GPIOE                   ((GPIO_TypeDef  *) GPIOE_BASE)
 
 /****************************************************************/
 /*           Peripheral Registers Bits Definition               */
