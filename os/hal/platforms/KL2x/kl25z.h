@@ -260,6 +260,30 @@ typedef struct
 #define SIM_SOPT1CFG_UVSWE           ((uint32_t)0x02000000)    /*!< USB voltage regulator VLP standby write enable */
 #define SIM_SOPT1CFG_URWE            ((uint32_t)0x01000000)    /*!< USB voltage regulator voltage regulator write enable */
 
+/*******  Bits definition for SIM_SCGC5 register  ************/
+#define SIM_SCGC5_PORTE              ((uint32_t)0x00002000)    /*!< Port E Clock Gate Control */
+#define SIM_SCGC5_PORTD              ((uint32_t)0x00001000)    /*!< Port D Clock Gate Control */
+#define SIM_SCGC5_PORTC              ((uint32_t)0x00000800)    /*!< Port C Clock Gate Control */
+#define SIM_SCGC5_PORTB              ((uint32_t)0x00000400)    /*!< Port B Clock Gate Control */
+#define SIM_SCGC5_PORTA              ((uint32_t)0x00000200)    /*!< Port A Clock Gate Control */
+#define SIM_SCGC5_TSI                ((uint32_t)0x00000020)    /*!< TSI Access Control */
+#define SIM_SCGC5_LPTMR              ((uint32_t)0x00000001)    /*!< Low Power Timer Access Control */
+
+/****************************************************************/
+/*                                                              */
+/*           Port Control and interrupts (PORT)                 */
+/*                                                              */
+/****************************************************************/
+/********  Bits definition for PORTx_PCRn register  *************/
+#define PORTx_PRCn_ISR               ((uint32_t)0x01000000)    /*!< Interrupt Status Flag */
+#define PORTx_PRCn_IRQC              ((uint32_t)0x000F0000)    /*!< Interrupt Configuration */
+#define PORTx_PRCn_MUX               ((uint32_t)0x00000700)    /*!< Pin Mux Control */
+#define PORTx_PRCn_DSE               ((uint32_t)0x00000040)    /*!< Drive Strength Enable */
+#define PORTx_PRCn_PFE               ((uint32_t)0x00000010)    /*!< Passive Filter Enable */
+#define PORTx_PRCn_SRE               ((uint32_t)0x00000004)    /*!< Slew Rate Enable */
+#define PORTx_PRCn_PE                ((uint32_t)0x00000002)    /*!< Pull Enable */
+#define PORTx_PRCn_PS                ((uint32_t)0x00000001)    /*!< Pull Select */
+
 /****************************************************************/
 /*                                                              */
 /*                   Oscillator (OSC)                           */
