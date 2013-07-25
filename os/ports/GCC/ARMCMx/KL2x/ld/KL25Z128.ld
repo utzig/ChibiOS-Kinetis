@@ -29,7 +29,7 @@ MEMORY
   flash0   :  org = 0x00000000,  len = 0xc0
   flashcfg :  org = 0x00000400,  len = 0x10
   flash    :  org = 0x00000410,  len = 128k - 0x410
-  ram      :  org = 0x1FFFFF000, len = 16k
+  ram      :  org = 0x1FFFF000,  len = 16k
 }
 
 __ram_start__           = ORIGIN(ram);
