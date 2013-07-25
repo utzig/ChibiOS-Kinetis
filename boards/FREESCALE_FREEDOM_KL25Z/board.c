@@ -25,6 +25,7 @@
  */
 const PALConfig pal_default_config =
 {
+#if 0
   {VAL_GPIOA_MODER, VAL_GPIOA_OTYPER, VAL_GPIOA_OSPEEDR, VAL_GPIOA_PUPDR,
    VAL_GPIOA_ODR,   VAL_GPIOA_AFRL,   VAL_GPIOA_AFRH},
   {VAL_GPIOB_MODER, VAL_GPIOB_OTYPER, VAL_GPIOB_OSPEEDR, VAL_GPIOB_PUPDR,
@@ -35,6 +36,7 @@ const PALConfig pal_default_config =
    VAL_GPIOD_ODR,   VAL_GPIOD_AFRL,   VAL_GPIOD_AFRH},
   {VAL_GPIOF_MODER, VAL_GPIOF_OTYPER, VAL_GPIOF_OSPEEDR, VAL_GPIOF_PUPDR,
    VAL_GPIOF_ODR,   VAL_GPIOF_AFRL,   VAL_GPIOF_AFRH}
+#endif
 };
 #endif
 
@@ -45,30 +47,8 @@ const PALConfig pal_default_config =
  */
 void __early_init(void) {
 
-  stm32_clock_init();
+  kl2x_clock_init();
 }
-
-#if HAL_USE_MMC_SPI || defined(__DOXYGEN__)
-/**
- * @brief   MMC_SPI card detection.
- */
-bool_t mmc_lld_is_card_inserted(MMCDriver *mmcp) {
-
-  (void)mmcp;
-  /* TODO: Fill the implementation.*/
-  return TRUE;
-}
-
-/**
- * @brief   MMC_SPI card write protection detection.
- */
-bool_t mmc_lld_is_write_protected(MMCDriver *mmcp) {
-
-  (void)mmcp;
-  /* TODO: Fill the implementation.*/
-  return FALSE;
-}
-#endif
 
 /**
  * @brief   Board-specific initialization code.
