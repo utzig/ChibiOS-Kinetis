@@ -8,7 +8,8 @@ ifeq ($(BUILDDIR),.)
   BUILDDIR = build
 endif
 OUTFILES = $(BUILDDIR)/$(PROJECT).elf $(BUILDDIR)/$(PROJECT).hex \
-           $(BUILDDIR)/$(PROJECT).bin $(BUILDDIR)/$(PROJECT).dmp
+           $(BUILDDIR)/$(PROJECT).bin $(BUILDDIR)/$(PROJECT).dmp \
+           $(BUILDDIR)/$(PROJECT).srec
 
 # Automatic compiler options
 OPT = $(USE_OPT)
@@ -205,6 +206,14 @@ else
 	@echo Creating $@
 	@$(OD) $(ODFLAGS) $< > $@
 	@echo Done
+endif
+
+%.srec: %.elf $(LDSCRIPT)
+ifeq ($(USE_VERBOSE_COMPILE),yes)
+	$(SREC) $< $@
+else
+	@echo Creating $@
+	@$(SREC) $< $@
 endif
 
 clean:
