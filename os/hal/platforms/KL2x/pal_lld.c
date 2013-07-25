@@ -61,30 +61,22 @@
  */
 void _pal_lld_init(const PALConfig *config) {
 
-  (void)config;
+  int i, j;
 
-#if 0
-  SIM->SCGC5 |=  0x00001400;
-  SIM->SCGC6 |=  0x05000000;
-  SIM->SOPT2 &= ~0x03000000;
-  SIM->SOPT2 |=  0x01000000;
+  /* Enable clocking of all Ports */
+  SIM->SCGC5 |= SIM_SCGC5_PORTA |
+                SIM_SCGC5_PORTB |
+                SIM_SCGC5_PORTC |
+                SIM_SCGC5_PORTD |
+                SIM_SCGC5_PORTE;
 
-  PORTB->PCR18 = 0x00000300;  // TPM2_CH0 enable on PTB18 (red)
-  PORTB->PCR19 = 0x00000300;  // TPM2_CH1 enable on PTB19 (green)
-  PORTD->PCR1  = 0x00000400;  // TPM0_CH1 enable on PTD1  (blue)
-
-  TPM0->C1V  = 0;
-  TPM2->C0V  = 0;
-  TPM2->C1V  = 0;
-
-  TPM0->MOD  = 99;
-  TPM0->C1SC = 0x00000024;
-  TPM2->MOD  = 99;
-  TPM2->C0SC = 0x00000024;
-  TPM2->C1SC = 0x00000024;
-  TPM2->SC   = 0x00000008;
-  TPM0->SC   = 0x00000008;
-#endif
+  for (i = 0; i < TOTAL_PORTS; i++) {
+    for (j = 0; j < PADS_PER_PORT; j++) {
+      pal_lld_setpadmode(config->ports[i].port,
+                         j,
+                         config->ports[i].pads[j]);
+    }
+  }
 }
 
 /**
@@ -106,6 +98,107 @@ void _pal_lld_setgroupmode(ioportid_t port,
   (void)mask;
   (void)mode;
 
+}
+
+/**
+ * @brief   Reads a logical state from an I/O pad.
+ * @note    The @ref PAL provides a default software implementation of this
+ *          functionality, implement this function if can optimize it by using
+ *          special hardware functionalities or special coding.
+ *
+ * @param[in] port      port identifier
+ * @param[in] pad       pad number within the port
+ * @return              The logical state.
+ * @retval PAL_LOW      low logical state.
+ * @retval PAL_HIGH     high logical state.
+ *
+ * @notapi
+ */
+uint8_t pal_lld_readpad(ioportid_t port, uint8_t pad)
+{
+  return (port->PDIR & ((uint32_t) 1 << pad)) ? PAL_HIGH : PAL_LOW;
+}
+
+/**
+ * @brief   Writes a logical state on an output pad.
+ * @note    This function is not meant to be invoked directly by the
+ *          application  code.
+ * @note    The @ref PAL provides a default software implementation of this
+ *          functionality, implement this function if can optimize it by using
+ *          special hardware functionalities or special coding.
+ *
+ * @param[in] port      port identifier
+ * @param[in] pad       pad number within the port
+ * @param[in] bit       logical value, the value must be @p PAL_LOW or
+ *                      @p PAL_HIGH
+ *
+ * @notapi
+ */
+void pal_lld_writepad(ioportid_t port, uint8_t pad, uint8_t bit)
+{
+  if (bit == PAL_HIGH)
+    port->PDOR |= ((uint32_t) 1 << pad);
+  else
+    port->PDOR &= ~((uint32_t) 1 << pad);
+}
+
+/**
+ * @brief   Pad mode setup.
+ * @details This function programs a pad with the specified mode.
+ * @note    The @ref PAL provides a default software implementation of this
+ *          functionality, implement this function if can optimize it by using
+ *          special hardware functionalities or special coding.
+ * @note    Programming an unknown or unsupported mode is silently ignored.
+ *
+ * @param[in] port      port identifier
+ * @param[in] pad       pad number within the port
+ * @param[in] mode      pad mode
+ *
+ * @notapi
+ */
+void pal_lld_setpadmode(ioportid_t port, uint8_t pad, iomode_t mode)
+{
+  PORT_TypeDef *portcfg = NULL;
+
+  chDbgAssert(pad <= 31, "pal_lld_setpadmode(), #1",
+                         "invalid pad");
+
+  if (mode == PAL_MODE_OUTPUT_PUSHPULL)
+    port->PDDR |=  ((uint32_t) 1 << pad);
+  else
+    port->PDDR &= ~((uint32_t) 1 << pad);
+
+  if (port == IOPORT1)
+    portcfg = PORTA;
+  else if (port == IOPORT2)
+    portcfg = PORTB;
+  else if (port == IOPORT3)
+    portcfg = PORTC;
+  else if (port == IOPORT4)
+    portcfg = PORTD;
+  else if (port == IOPORT5)
+    portcfg = PORTE;
+
+  chDbgAssert(portcfg != NULL, "pal_lld_setpadmode(), #2",
+                               "invalid port");
+
+  switch (mode) {
+  case PAL_MODE_RESET:
+  case PAL_MODE_INPUT:
+  case PAL_MODE_OUTPUT_PUSHPULL:
+    portcfg->PCR[pad] = 0x00000100;
+    break;
+  case PAL_MODE_INPUT_PULLUP:
+    portcfg->PCR[pad] = 0x00000100 | PORTx_PRCn_PE | PORTx_PRCn_PS;
+    break;
+  case PAL_MODE_INPUT_PULLDOWN:
+    portcfg->PCR[pad] = 0x00000100 | PORTx_PRCn_PE;
+    break;
+  case PAL_MODE_UNCONNECTED:
+  case PAL_MODE_INPUT_ANALOG:
+    portcfg->PCR[pad] = 0x00000000;
+    break;
+  }
 }
 
 #endif /* HAL_USE_PAL */
