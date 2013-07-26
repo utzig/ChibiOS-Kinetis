@@ -284,6 +284,8 @@ typedef struct
 #define PORTx_PRCn_PE                ((uint32_t)0x00000002)    /*!< Pull Enable */
 #define PORTx_PRCn_PS                ((uint32_t)0x00000001)    /*!< Pull Select */
 
+#define PORTx_PRCn_MUX_SHIFT         8
+
 /****************************************************************/
 /*                                                              */
 /*                   Oscillator (OSC)                           */

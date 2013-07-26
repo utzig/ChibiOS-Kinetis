@@ -33,6 +33,17 @@
 
 #undef PAL_MODE_OUTPUT_OPENDRAIN
 
+#define PAL_MODE_ALTERNATIVE_1      0x10
+#define PAL_MODE_ALTERNATIVE_2      0x11
+#define PAL_MODE_ALTERNATIVE_3      0x12
+#define PAL_MODE_ALTERNATIVE_4      0x13
+#define PAL_MODE_ALTERNATIVE_5      0x14
+#define PAL_MODE_ALTERNATIVE_6      0x15
+#define PAL_MODE_ALTERNATIVE_7      0x16
+
+#define PIN_MUX_ALTERNATIVE(x) \
+    (((uint32_t) (x) << PORTx_PRCn_MUX_SHIFT) & PORTx_PRCn_MUX)
+
 /*===========================================================================*/
 /* I/O Ports Types and constants.                                            */
 /*===========================================================================*/
