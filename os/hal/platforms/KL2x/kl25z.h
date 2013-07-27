@@ -189,6 +189,22 @@ typedef struct
 
 typedef struct
 {
+  __IO uint8_t  A1;
+  __IO uint8_t  F;
+  __IO uint8_t  C1;
+  __IO uint8_t  S;
+  __IO uint8_t  D;
+  __IO uint8_t  C2;
+  __IO uint8_t  FLT;
+  __IO uint8_t  RA;
+  __IO uint8_t  SMB;
+  __IO uint8_t  A2;
+  __IO uint8_t  SLTH;
+  __IO uint8_t  SLTL;
+} I2C_TypeDef;
+
+typedef struct
+{
   __IO uint8_t  BDH;
   __IO uint8_t  BDL;
   __IO uint8_t  C1;
@@ -230,6 +246,8 @@ typedef struct
 #define PORTE_BASE              ((uint32_t)0x4004D000)
 #define MCG_BASE                ((uint32_t)0x40064000)
 #define OSC0_BASE               ((uint32_t)0x40065000)
+#define I2C0_BASE               ((uint32_t)0x40066000)
+#define I2C1_BASE               ((uint32_t)0x40067000)
 #define UART0_BASE              ((uint32_t)0x4006A000)
 #define UART1_BASE              ((uint32_t)0x4006B000)
 #define UART2_BASE              ((uint32_t)0x4006C000)
@@ -253,6 +271,8 @@ typedef struct
 #define PORTE                   ((PORT_TypeDef  *)   PORTE_BASE)
 #define MCG                     ((MCG_TypeDef  *)    MCG_BASE)
 #define OSC0                    ((OSC_TypeDef  *)    OSC0_BASE)
+#define I2C0                    ((I2C_TypeDef *)     I2C0_BASE)
+#define I2C1                    ((I2C_TypeDef *)     I2C1_BASE)
 #define UART0                   ((UARTLP_TypeDef *)  UART0_BASE)
 #define UART1                   ((UART_TypeDef *)    UART1_BASE)
 #define UART2                   ((UART_TypeDef *)    UART2_BASE)
@@ -341,6 +361,85 @@ typedef struct
 #define OSC_CR_SC4P                  ((uint8_t)0x04)    /*!< Oscillator 4pF Capacitor Load Configure */
 #define OSC_CR_SC8P                  ((uint8_t)0x02)    /*!< Oscillator 8pF Capacitor Load Configure */
 #define OSC_CR_SC16P                 ((uint8_t)0x01)    /*!< Oscillator 16pF Capacitor Load Configure */
+
+/****************************************************************/
+/*                                                              */
+/*             Inter-Integrated Circuit (I2C)                   */
+/*                                                              */
+/****************************************************************/
+/***********  Bits definition for I2Cx_A1 register  *************/
+#define I2Cx_A1_AD                   ((uint8_t)0xFE)    /*!< Address [7:1] */
+
+#define I2Cx_A1_AD_SHIT              1
+
+/***********  Bits definition for I2Cx_F register  **************/
+#define I2Cx_F_MULT                  ((uint8_t)0xC0)    /*!< Multiplier factor */
+#define I2Cx_F_ICR                   ((uint8_t)0x3F)    /*!< Clock rate */
+
+#define I2Cx_F_MULT_SHIFT            5
+
+/***********  Bits definition for I2Cx_C1 register  *************/
+#define I2Cx_C1_IICEN                ((uint8_t)0x80)    /*!< I2C Enable */
+#define I2Cx_C1_IICIE                ((uint8_t)0x40)    /*!< I2C Interrupt Enable */
+#define I2Cx_C1_MST                  ((uint8_t)0x20)    /*!< Master Mode Select */
+#define I2Cx_C1_TX                   ((uint8_t)0x10)    /*!< Transmit Mode Select */
+#define I2Cx_C1_TXAK                 ((uint8_t)0x08)    /*!< Transmit Acknowledge Enable */
+#define I2Cx_C1_RSTA                 ((uint8_t)0x04)    /*!< Repeat START */
+#define I2Cx_C1_WUEN                 ((uint8_t)0x02)    /*!< Wakeup Enable */
+#define I2Cx_C1_DMAEN                ((uint8_t)0x01)    /*!< DMA Enable */
+
+/***********  Bits definition for I2Cx_S register  **************/
+#define I2Cx_S_TCF                   ((uint8_t)0x80)    /*!< Transfer Complete Flag */
+#define I2Cx_S_IAAS                  ((uint8_t)0x40)    /*!< Addressed As A Slave */
+#define I2Cx_S_BUSY                  ((uint8_t)0x20)    /*!< Bus Busy */
+#define I2Cx_S_ARBL                  ((uint8_t)0x10)    /*!< Arbitration Lost */
+#define I2Cx_S_RAM                   ((uint8_t)0x08)    /*!< Range Address Match */
+#define I2Cx_S_SRW                   ((uint8_t)0x04)    /*!< Slave Read/Write */
+#define I2Cx_S_IICIF                 ((uint8_t)0x02)    /*!< Interrupt Flag */
+#define I2Cx_S_RXAK                  ((uint8_t)0x01)    /*!< Receive Acknowledge */
+
+/***********  Bits definition for I2Cx_D register  **************/
+#define I2Cx_D_DATA                  ((uint8_t)0xFF)    /*!< Data */
+
+/***********  Bits definition for I2Cx_C2 register  *************/
+#define I2Cx_C2_GCAEN                ((uint8_t)0x80)    /*!< General Call Address Enable */
+#define I2Cx_C2_ADEXT                ((uint8_t)0x40)    /*!< Address Extension */
+#define I2Cx_C2_HDRS                 ((uint8_t)0x20)    /*!< High Drive Select */
+#define I2Cx_C2_SBRC                 ((uint8_t)0x10)    /*!< Slave Baud Rate Control */
+#define I2Cx_C2_RMEN                 ((uint8_t)0x08)    /*!< Range Address Matching Enable */
+#define I2Cx_C2_AD_10_8              ((uint8_t)0x03)    /*!< Slave Address [10:8] */
+
+/***********  Bits definition for I2Cx_FLT register  ************/
+#define I2Cx_FLT_SHEN                ((uint8_t)0x80)    /*!< Stop Hold Enable */
+#define I2Cx_FLT_STOPF               ((uint8_t)0x40)    /*!< I2C Bus Stop Detect Flag */
+#define I2Cx_FLT_STOPIE              ((uint8_t)0x20)    /*!< I2C Bus Stop Interrupt Enable */
+#define I2Cx_FLT_FLT                 ((uint8_t)0x1F)    /*!< I2C Programmable Filter Factor */
+
+/***********  Bits definition for I2Cx_RA register  *************/
+#define I2Cx_RA_RAD                  ((uint8_t)0xFE)    /*!< Range Slave Address */
+
+#define I2Cx_RA_RAD_SHIFT            1
+
+/***********  Bits definition for I2Cx_SMB register  ************/
+#define I2Cx_SMB_FACK                ((uint8_t)0x00)    /*!< Fast NACK/ACK Enable */
+#define I2Cx_SMB_ALERTEN             ((uint8_t)0x00)    /*!< SMBus Alert Response Address Enable */
+#define I2Cx_SMB_SIICAEN             ((uint8_t)0x00)    /*!< Second I2C Address Enable */
+#define I2Cx_SMB_TCKSEL              ((uint8_t)0x00)    /*!< Timeout Counter Clock Select */
+#define I2Cx_SMB_SLTF                ((uint8_t)0x00)    /*!< SCL Low Timeout Flag */
+#define I2Cx_SMB_SHTF1               ((uint8_t)0x00)    /*!< SCL High Timeout Flag 1 */
+#define I2Cx_SMB_SHTF2               ((uint8_t)0x00)    /*!< SCL High Timeout Flag 2 */
+#define I2Cx_SMB_SHTF2IE             ((uint8_t)0x00)    /*!< SHTF2 Interrupt Enable */
+
+/***********  Bits definition for I2Cx_A2 register  *************/
+#define I2Cx_A2_SAD                  ((uint8_t)0xFE)    /*!< SMBus Address */
+
+#define I2Cx_A2_SAD_SHIFT            1
+
+/***********  Bits definition for I2Cx_SLTH register  ***********/
+#define I2Cx_SLTH_SSLT               ((uint8_t)0xFF)    /*!< MSB of SCL low timeout value */
+
+/***********  Bits definition for I2Cx_SLTL register  ***********/
+#define I2Cx_SLTL_SSLT               ((uint8_t)0xFF)    /*!< LSB of SCL low timeout value */
 
 /****************************************************************/
 /*                                                              */
