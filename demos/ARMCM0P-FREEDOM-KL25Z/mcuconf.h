@@ -37,7 +37,9 @@
 /*
  * SERIAL driver system settings.
  */
-#define KINETIS_SERIAL_USE_USART1             TRUE
-#define KINETIS_SERIAL_USE_USART2             FALSE
-#define KINETIS_SERIAL_USART1_PRIORITY        3
-#define KINETIS_SERIAL_USART2_PRIORITY        3
+#define KINETIS_SERIAL_USE_UART0              TRUE
+#define KINETIS_SERIAL_USE_UART1              FALSE
+#define KINETIS_SERIAL_USE_UART2              FALSE
+#define KINETIS_SERIAL_UART0_PRIORITY         3
+#define KINETIS_SERIAL_UART1_PRIORITY         3
+#define KINETIS_SERIAL_UART2_PRIORITY         3
