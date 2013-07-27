@@ -43,8 +43,22 @@
  * @brief   SD1 driver enable switch.
  * @details If set to @p TRUE the support for SD1 is included.
  */
-#if !defined(KL2x_SERIAL_USE_SD1) || defined(__DOXYGEN__)
-#define KL2x_SERIAL_USE_SD1             FALSE
+#if !defined(KINETIS_SERIAL_USE_UART0) || defined(__DOXYGEN__)
+#define KINETIS_SERIAL_USE_UART0             FALSE
+#endif
+/**
+ * @brief   SD2 driver enable switch.
+ * @details If set to @p TRUE the support for SD2 is included.
+ */
+#if !defined(KINETIS_SERIAL_USE_UART1) || defined(__DOXYGEN__)
+#define KINETIS_SERIAL_USE_UART1             FALSE
+#endif
+/**
+ * @brief   SD3 driver enable switch.
+ * @details If set to @p TRUE the support for SD3 is included.
+ */
+#if !defined(KINETIS_SERIAL_USE_UART2) || defined(__DOXYGEN__)
+#define KINETIS_SERIAL_USE_UART2             FALSE
 #endif
 /** @} */
 
@@ -86,7 +100,9 @@ typedef struct {
   uint8_t                   ib[SERIAL_BUFFERS_SIZE];                        \
   /* Output circular buffer.*/                                              \
   uint8_t                   ob[SERIAL_BUFFERS_SIZE];                        \
-  /* End of the mandatory fields.*/
+  /* End of the mandatory fields.*/                                         \
+  /* Pointer to the UART registers block.*/                                 \
+  UARTLP_TypeDef            *uart;
 
 /*===========================================================================*/
 /* Driver macros.                                                            */
@@ -96,8 +112,16 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if KL2x_SERIAL_USE_SD1 && !defined(__DOXYGEN__)
+#if KINETIS_SERIAL_USE_UART0 && !defined(__DOXYGEN__)
 extern SerialDriver SD1;
+#endif
+
+#if KINETIS_SERIAL_USE_UART1 && !defined(__DOXYGEN__)
+extern SerialDriver SD2;
+#endif
+
+#if KINETIS_SERIAL_USE_UART2 && !defined(__DOXYGEN__)
+extern SerialDriver SD3;
 #endif
 
 #ifdef __cplusplus

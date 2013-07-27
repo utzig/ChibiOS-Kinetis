@@ -15,8 +15,8 @@
 */
 
 /**
- * @file    templates/serial_lld.c
- * @brief   Serial Driver subsystem low level driver source template.
+ * @file    KL2x/serial_lld.c
+ * @brief   Kinetis KL2x Serial Driver subsystem low level driver source.
  *
  * @addtogroup SERIAL
  * @{
@@ -26,6 +26,8 @@
 #include "hal.h"
 
 #if HAL_USE_SERIAL || defined(__DOXYGEN__)
+
+#include "kl25z.h"
 
 /*===========================================================================*/
 /* Driver local definitions.                                                 */
@@ -38,8 +40,16 @@
 /**
  * @brief   SD1 driver identifier.
  */
-#if PLATFORM_SERIAL_USE_SD1 || defined(__DOXYGEN__)
+#if KINETIS_SERIAL_USE_UART0 || defined(__DOXYGEN__)
 SerialDriver SD1;
+#endif
+
+#if KINETIS_SERIAL_USE_UART1 || defined(__DOXYGEN__)
+SerialDriver SD2;
+#endif
+
+#if KINETIS_SERIAL_USE_UART2 || defined(__DOXYGEN__)
+SerialDriver SD3;
 #endif
 
 /*===========================================================================*/
@@ -57,9 +67,150 @@ static const SerialConfig default_config = {
 /* Driver local functions.                                                   */
 /*===========================================================================*/
 
+/**
+ * @brief   Common IRQ handler.
+ * @note    Tries hard to clear all the pending interrupt sources, we don't
+ *          want to go through the whole ISR and have another interrupt soon
+ *          after.
+ *
+ * @param[in] u         pointer to an UART I/O block
+ * @param[in] sdp       communication channel associated to the UART
+ */
+static void serve_interrupt(SerialDriver *sdp) {
+  UARTLP_TypeDef *u = sdp->uart;
+
+  if (u->S1 & UARTx_S1_RDRF) {
+    chSysLockFromIsr();
+    if (chIQIsEmptyI(&sdp->iqueue))
+      chnAddFlagsI(sdp, CHN_INPUT_AVAILABLE);
+    if (chIQPutI(&sdp->iqueue, u->D) < Q_OK)
+      chnAddFlagsI(sdp, SD_OVERRUN_ERROR);
+    chSysUnlockFromIsr();
+  }
+
+  if (u->S1 & UARTx_S1_TDRE) {
+    msg_t b;
+
+    chSysLockFromIsr();
+    b = chOQGetI(&sdp->oqueue);
+    chSysUnlockFromIsr();
+
+    if (b < Q_OK) {
+      chSysLockFromIsr();
+      chnAddFlagsI(sdp, CHN_OUTPUT_EMPTY);
+      chSysUnlockFromIsr();
+      u->C2 &= ~UARTx_C2_TIE;
+    } else {
+       u->D = b;
+    }
+  }
+
+  if (u->S1 & UARTx_S1_IDLE)
+    u->S1 |= UARTx_S1_IDLE;
+
+  if (u->S1 & (UARTx_S1_OR | UARTx_S1_NF | UARTx_S1_FE | UARTx_S1_PF)) {
+    // FIXME: need to add set_error()
+    u->S1 |= UARTx_S1_OR | UARTx_S1_NF | UARTx_S1_FE | UARTx_S1_PF;
+  }
+}
+
+/**
+ * @brief   Attempts a TX preload
+ */
+static void preload(SerialDriver *sdp) {
+  UARTLP_TypeDef *u = sdp->uart;
+
+  if (u->S1 & UARTx_S1_TDRE) {
+    msg_t b = chOQGetI(&sdp->oqueue);
+    if (b < Q_OK) {
+      chnAddFlagsI(sdp, CHN_OUTPUT_EMPTY);
+      return;
+    }
+    u->D = b;
+    u->C2 |= UARTx_C2_TIE;
+  }
+}
+
+/**
+ * @brief   Driver output notification.
+ */
+#if KINETIS_SERIAL_USE_UART0 || defined(__DOXYGEN__)
+static void notify1(GenericQueue *qp)
+{
+  (void)qp;
+  preload(&SD1);
+}
+#endif
+
+#if KINETIS_SERIAL_USE_UART1 || defined(__DOXYGEN__)
+static void notify2(GenericQueue *qp)
+{
+  (void)qp;
+  preload(&SD2);
+}
+#endif
+
+#if KINETIS_SERIAL_USE_UART2 || defined(__DOXYGEN__)
+static void notify3(GenericQueue *qp)
+{
+  (void)qp;
+  preload(&SD3);
+}
+#endif
+
+/**
+ * @brief   Common UART configuration.
+ *
+ */
+static void configure_uart(UARTLP_TypeDef *uart, const SerialConfig *config)
+{
+  uart->C1 = 0;
+  uart->C3 = UARTx_C3_ORIE | UARTx_C3_NEIE | UARTx_C3_FEIE | UARTx_C3_PEIE;
+  uart->S1 = UARTx_S1_IDLE | UARTx_S1_OR | UARTx_S1_NF | UARTx_S1_FE | UARTx_S1_PF;
+  while (uart->S1 & UARTx_S1_RDRF) {
+    (void)uart->D;
+  }
+
+  /* FIXME: change fixed OSR = 16 to dynamic value based on baud */
+  /* FIXME: move all occurences of clock to board.h */
+  uint16_t divisor = (48000000 / 16) / config->sc_speed;
+  uart->C4 = UARTx_C4_OSR & (16 - 1);
+  uart->BDH = (divisor >> 8) & UARTx_BDH_SBR;
+  uart->BDL = (divisor & UARTx_BDL_SBR);
+
+  uart->C2 = UARTx_C2_RE | UARTx_C2_RIE | UARTx_C2_TE;
+}
+
 /*===========================================================================*/
 /* Driver interrupt handlers.                                                */
 /*===========================================================================*/
+
+#if KINETIS_SERIAL_USE_UART0 || defined(__DOXYGEN__)
+CH_IRQ_HANDLER(Vector70) {
+
+  CH_IRQ_PROLOGUE();
+  serve_interrupt(&SD1);
+  CH_IRQ_EPILOGUE();
+}
+#endif
+
+#if KINETIS_SERIAL_USE_UART1 || defined(__DOXYGEN__)
+CH_IRQ_HANDLER(Vector74) {
+
+  CH_IRQ_PROLOGUE();
+  serve_interrupt(&SD2);
+  CH_IRQ_EPILOGUE();
+}
+#endif
+
+#if KINETIS_SERIAL_USE_UART2 || defined(__DOXYGEN__)
+CH_IRQ_HANDLER(Vector78) {
+
+  CH_IRQ_PROLOGUE();
+  serve_interrupt(&SD3);
+  CH_IRQ_EPILOGUE();
+}
+#endif
 
 /*===========================================================================*/
 /* Driver exported functions.                                                */
@@ -72,10 +223,23 @@ static const SerialConfig default_config = {
  */
 void sd_lld_init(void) {
 
-#if PLATFORM_SERIAL_USE_SD1
+#if KINETIS_SERIAL_USE_UART0
   /* Driver initialization.*/
-  sdObjectInit(&SD1);
-#endif /* PLATFORM_SERIAL_USE_SD1 */
+  sdObjectInit(&SD1, NULL, notify1);
+  SD1.uart = UART0;
+#endif
+
+#if KINETIS_SERIAL_USE_UART1
+  /* Driver initialization.*/
+  sdObjectInit(&SD2, NULL, notify2);
+  SD2.uart = UART1;
+#endif
+
+#if KINETIS_SERIAL_USE_UART2
+  /* Driver initialization.*/
+  sdObjectInit(&SD3, NULL, notify3);
+  SD3.uart = UART2;
+#endif
 }
 
 /**
@@ -95,11 +259,33 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 
   if (sdp->state == SD_STOP) {
     /* Enables the peripheral.*/
-#if PLATFORM_SERIAL_USE_SD1
-    if (&SD1 == sdp) {
 
+#if KINETIS_SERIAL_USE_UART0
+    if (sdp == &SD1) {
+      SIM->SCGC4 |= SIM_SCGC4_UART0;
+      SIM->SOPT2 &= ~SIM_SOPT2_UART0SRC;
+      SIM->SOPT2 |= (SIM_SOPT2_UART0SRC & ((uint32_t) 1 << SIM_SOPT2_UART0SRC_SHIFT));
+      configure_uart(sdp->uart, config);
+      nvicEnableVector(UART0_IRQn, CORTEX_PRIORITY_MASK(KINETIS_SERIAL_UART0_PRIORITY));
     }
-#endif /* PLATFORM_SD_USE_SD1 */
+#endif /* KINETIS_SERIAL_USE_UART0 */
+
+#if KINETIS_SERIAL_USE_UART1
+    if (sdp == &SD2) {
+      SIM->SCGC4 |= SIM_SCGC4_UART1;
+      configure_uart(sdp->uart, config);
+      nvicEnableVector(UART1_IRQn, CORTEX_PRIORITY_MASK(KINETIS_SERIAL_UART0_PRIORITY));
+    }
+#endif /* KINETIS_SERIAL_USE_UART1 */
+
+#if KINETIS_SERIAL_USE_UART2
+    if (sdp == &SD3) {
+      SIM->SCGC4 |= SIM_SCGC4_UART2;
+      configure_uart(sdp->uart, config);
+      nvicEnableVector(UART2_IRQn, CORTEX_PRIORITY_MASK(KINETIS_SERIAL_UART0_PRIORITY));
+    }
+#endif /* KINETIS_SERIAL_USE_UART2 */
+
   }
   /* Configures the peripheral.*/
 
@@ -117,14 +303,28 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 void sd_lld_stop(SerialDriver *sdp) {
 
   if (sdp->state == SD_READY) {
-    /* Resets the peripheral.*/
+    /* TODO: Resets the peripheral.*/
 
-    /* Disables the peripheral.*/
-#if PLATFORM_SERIAL_USE_SD1
-    if (&SD1 == sdp) {
-
+#if KINETIS_SERIAL_USE_UART0
+    if (sdp == &SD1) {
+      nvicDisableVector(UART0_IRQn);
+      SIM->SCGC4 &= ~SIM_SCGC4_UART0;
     }
-#endif /* PLATFORM_SERIAL_USE_SD1 */
+#endif
+
+#if KINETIS_SERIAL_USE_UART1
+    if (sdp == &SD2) {
+      nvicDisableVector(UART1_IRQn);
+      SIM->SCGC4 &= ~SIM_SCGC4_UART1;
+    }
+#endif
+
+#if KINETIS_SERIAL_USE_UART2
+    if (sdp == &SD3) {
+      nvicDisableVector(UART2_IRQn);
+      SIM->SCGC4 &= ~SIM_SCGC4_UART2;
+    }
+#endif
   }
 }
 
