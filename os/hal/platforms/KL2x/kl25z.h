@@ -189,6 +189,18 @@ typedef struct
 
 typedef struct
 {
+  __IO uint8_t  C1;
+  __IO uint8_t  C2;
+  __IO uint8_t  BR;
+  __IO uint8_t  S;
+       uint8_t  RESERVED0[1];
+  __IO uint8_t  D;
+       uint8_t  RESERVED1[1];
+  __IO uint8_t  M;
+} SPI_TypeDef;
+
+typedef struct
+{
   __IO uint8_t  A1;
   __IO uint8_t  F;
   __IO uint8_t  C1;
@@ -251,6 +263,8 @@ typedef struct
 #define UART0_BASE              ((uint32_t)0x4006A000)
 #define UART1_BASE              ((uint32_t)0x4006B000)
 #define UART2_BASE              ((uint32_t)0x4006C000)
+#define SPI0_BASE               ((uint32_t)0x40076000)
+#define SPI1_BASE               ((uint32_t)0x40077000)
 #define GPIOA_BASE              ((uint32_t)0x400FF000)
 #define GPIOB_BASE              ((uint32_t)0x400FF040)
 #define GPIOC_BASE              ((uint32_t)0x400FF080)
@@ -271,6 +285,8 @@ typedef struct
 #define PORTE                   ((PORT_TypeDef  *)   PORTE_BASE)
 #define MCG                     ((MCG_TypeDef  *)    MCG_BASE)
 #define OSC0                    ((OSC_TypeDef  *)    OSC0_BASE)
+#define SPI0                    ((SPI_TypeDef *)     SPI0_BASE)
+#define SPI1                    ((SPI_TypeDef *)     SPI1_BASE)
 #define I2C0                    ((I2C_TypeDef *)     I2C0_BASE)
 #define I2C1                    ((I2C_TypeDef *)     I2C1_BASE)
 #define UART0                   ((UARTLP_TypeDef *)  UART0_BASE)
@@ -361,6 +377,48 @@ typedef struct
 #define OSC_CR_SC4P                  ((uint8_t)0x04)    /*!< Oscillator 4pF Capacitor Load Configure */
 #define OSC_CR_SC8P                  ((uint8_t)0x02)    /*!< Oscillator 8pF Capacitor Load Configure */
 #define OSC_CR_SC16P                 ((uint8_t)0x01)    /*!< Oscillator 16pF Capacitor Load Configure */
+
+/****************************************************************/
+/*                                                              */
+/*             Serial Peripheral Interface (SPI)                */
+/*                                                              */
+/****************************************************************/
+/***********  Bits definition for SPIx_C1 register  *************/
+#define SPIx_C1_SPIE                 ((uint8_t)0x80)    /*!< SPI Interrupt Enable */
+#define SPIx_C1_SPE                  ((uint8_t)0x40)    /*!< SPI System Enable */
+#define SPIx_C1_SPTIE                ((uint8_t)0x20)    /*!< SPI Transmit Interrupt Enable */
+#define SPIx_C1_MSTR                 ((uint8_t)0x10)    /*!< Master/Slave Mode Select */
+#define SPIx_C1_CPOL                 ((uint8_t)0x08)    /*!< Clock Polarity */
+#define SPIx_C1_CPHA                 ((uint8_t)0x04)    /*!< Clock Phase */
+#define SPIx_C1_SSOE                 ((uint8_t)0x02)    /*!< Slave Select Output Enable */
+#define SPIx_C1_LSBFE                ((uint8_t)0x01)    /*!< LSB First */
+
+/***********  Bits definition for SPIx_C2 register  *************/
+#define SPIx_C2_SPMIE                ((uint8_t)0x80)    /*!< SPI Match Interrupt Enable */
+#define SPIx_C2_TXDMAE               ((uint8_t)0x20)    /*!< Transmit DMA Enable */
+#define SPIx_C2_MODFEN               ((uint8_t)0x10)    /*!< Master Mode-Fault Function Enable */
+#define SPIx_C2_BIDIROE              ((uint8_t)0x08)    /*!< Bidirectional Mode Output Enable */
+#define SPIx_C2_RXDMAE               ((uint8_t)0x04)    /*!< Receive DMA Enable */
+#define SPIx_C2_SPISWAI              ((uint8_t)0x02)    /*!< SPI Stop in Wait Mode */
+#define SPIx_C2_SPC0                 ((uint8_t)0x01)    /*!< SPI Pin Control 0 */
+
+/***********  Bits definition for SPIx_BR register  *************/
+#define SPIx_BR_SPPR                 ((uint8_t)0x70)    /*!< SPI Baud rate Prescaler Divisor */
+#define SPIx_BR_SPR                  ((uint8_t)0x0F)    /*!< SPI Baud rate Divisor */
+
+#define SPIx_BR_SPPR_SHIFT           4
+
+/***********  Bits definition for SPIx_S register  **************/
+#define SPIx_S_SPRF                  ((uint8_t)0x80)    /*!< SPI Read Buffer Full Flag */
+#define SPIx_S_SPMF                  ((uint8_t)0x40)    /*!< SPI Match Flag */
+#define SPIx_S_SPTEF                 ((uint8_t)0x20)    /*!< SPI Transmit Buffer Empty Flag */
+#define SPIx_S_MODF                  ((uint8_t)0x10)    /*!< Master Mode Fault Flag */
+
+/***********  Bits definition for SPIx_D register  **************/
+#define SPIx_D_DATA                  ((uint8_t)0xFF)    /*!< Data */
+
+/***********  Bits definition for SPIx_M register  **************/
+#define SPIx_M_DATA                  ((uint8_t)0xFF)    /*!< SPI HW Compare value for Match */
 
 /****************************************************************/
 /*                                                              */
