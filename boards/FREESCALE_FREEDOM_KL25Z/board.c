@@ -29,7 +29,7 @@ const PALConfig pal_default_config =
     {
       .port = IOPORT1,
       .pads = {
-        PAL_MODE_RESET,           PAL_MODE_RESET,             PAL_MODE_RESET,
+        PAL_MODE_RESET,           PAL_MODE_ALTERNATIVE_2,     PAL_MODE_ALTERNATIVE_2,
         PAL_MODE_RESET,           PAL_MODE_RESET,             PAL_MODE_RESET,
         PAL_MODE_RESET,           PAL_MODE_RESET,             PAL_MODE_RESET,
         PAL_MODE_RESET,           PAL_MODE_RESET,             PAL_MODE_RESET,
