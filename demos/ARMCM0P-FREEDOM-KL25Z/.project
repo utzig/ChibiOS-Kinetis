@@ -40,4 +40,10 @@
 			<locationURI>CHIBIOS/test</locationURI>
 		</link>
 	</linkedResources>
+	<variableList>
+		<variable>
+			<name>CHIBIOS</name>
+			<value>$%7BPARENT-2-PROJECT_LOC%7D</value>
+		</variable>
+	</variableList>
 </projectDescription>
