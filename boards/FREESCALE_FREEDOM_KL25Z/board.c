@@ -29,13 +29,13 @@ const PALConfig pal_default_config =
     {
       .port = IOPORT1,
       .pads = {
-        /* PTA0*/ PAL_MODE_RESET,           /* PTA1*/ PAL_MODE_ALTERNATIVE_2,   /* PTA2*/ PAL_MODE_ALTERNATIVE_2,
-        /* PTA3*/ PAL_MODE_RESET,           /* PTA4*/ PAL_MODE_RESET,           /* PTA5*/ PAL_MODE_RESET,
+        /* PTA0*/ PAL_MODE_ALTERNATIVE_7,   /* PTA1*/ PAL_MODE_ALTERNATIVE_2,   /* PTA2*/ PAL_MODE_ALTERNATIVE_2,
+        /* PTA3*/ PAL_MODE_ALTERNATIVE_7,   /* PTA4*/ PAL_MODE_RESET,           /* PTA5*/ PAL_MODE_RESET,
         /* PTA6*/ PAL_MODE_RESET,           /* PTA7*/ PAL_MODE_RESET,           /* PTA8*/ PAL_MODE_RESET,
         /* PTA9*/ PAL_MODE_RESET,           /*PTA10*/ PAL_MODE_RESET,           /*PTA11*/ PAL_MODE_RESET,
         /*PTA12*/ PAL_MODE_RESET,           /*PTA13*/ PAL_MODE_RESET,           /*PTA14*/ PAL_MODE_RESET,
         /*PTA15*/ PAL_MODE_RESET,           /*PTA16*/ PAL_MODE_RESET,           /*PTA17*/ PAL_MODE_RESET,
-        /*PTA18*/ PAL_MODE_UNCONNECTED,     /*PTA19*/ PAL_MODE_UNCONNECTED,     /*PTA20*/ PAL_MODE_RESET,
+        /*PTA18*/ PAL_MODE_UNCONNECTED,     /*PTA19*/ PAL_MODE_UNCONNECTED,     /*PTA20*/ PAL_MODE_ALTERNATIVE_7,
         /*PTA21*/ PAL_MODE_RESET,           /*PTA22*/ PAL_MODE_RESET,           /*PTA23*/ PAL_MODE_RESET,
         /*PTA24*/ PAL_MODE_RESET,           /*PTA25*/ PAL_MODE_RESET,           /*PTA26*/ PAL_MODE_RESET,
         /*PTA27*/ PAL_MODE_RESET,           /*PTA28*/ PAL_MODE_RESET,           /*PTA29*/ PAL_MODE_RESET,
