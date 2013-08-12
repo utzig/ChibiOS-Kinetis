@@ -106,11 +106,12 @@ static void serve_interrupt(SerialDriver *sdp) {
   }
 
   if (u->S1 & UARTx_S1_IDLE)
-    u->S1 |= UARTx_S1_IDLE;
+    u->S1 = UARTx_S1_IDLE;  // Clear IDLE (S1 bits are write-1-to-clear).
 
   if (u->S1 & (UARTx_S1_OR | UARTx_S1_NF | UARTx_S1_FE | UARTx_S1_PF)) {
     // FIXME: need to add set_error()
-    u->S1 |= UARTx_S1_OR | UARTx_S1_NF | UARTx_S1_FE | UARTx_S1_PF;
+    // Clear flags (S1 bits are write-1-to-clear).
+    u->S1 = UARTx_S1_OR | UARTx_S1_NF | UARTx_S1_FE | UARTx_S1_PF;
   }
 }
 
