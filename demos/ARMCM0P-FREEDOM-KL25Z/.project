@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>ARMCM0-STM32F051-DISCOVERY</name>
+	<name>ARMCM0P-FREEDOM-KL25Z</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -40,4 +40,10 @@
 			<locationURI>CHIBIOS/test</locationURI>
 		</link>
 	</linkedResources>
+	<variableList>
+		<variable>
+			<name>CHIBIOS</name>
+			<value>$%7BPARENT-2-PROJECT_LOC%7D</value>
+		</variable>
+	</variableList>
 </projectDescription>
