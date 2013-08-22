@@ -73,20 +73,33 @@ void hal_lld_init(void)
  */
 void kl2x_clock_init(void)
 {
+#if !KINETIS_NO_INIT
   /* Disable COP watchdog */
   SIM->COPC = 0;
 
   /* Enable PORTA */
-  SIM->SCGC5 |= 0x00000200;
+  SIM->SCGC5 |= SIM_SCGC5_PORTA;
 
   /* OUTDIV1 / 2, OUTDIV4 / 2 */
-  SIM->CLKDIV1 = 0x10010000;
+  SIM->CLKDIV1 =
+		  SIM_CLKDIV1_OUTDIV1(1) |  /* OUTDIV1 = divide-by-2 */
+		  SIM_CLKDIV1_OUTDIV4(1);   /* OUTDIV4 = divide-by-2 */
 
-  /* System oscillator drives 32 kHz clock */
-  SIM->SOPT1 &= ~0x000C0000;
+  /* System oscillator drives 32 kHz clock (OSC32KSEL=0) */
+  SIM->SOPT1 &= ~SIM_SOPT1_OSC32KSEL_MASK;
 
-  SIM->SOPT2 &= ~0x03000000;
-  SIM->SOPT2 |=  0x01010000;
+#if KINETIS_MCG_MODE == KINETIS_MCG_MODE_PEE
+  /*
+   * PLL Enabled External (PEE) MCG Mode
+   * Using 8 MHz crystal with PLL.
+   * f_MCGOUTCLK = (OSCCLK / PLL_R) * M
+   *  PLL_R is the reference divider selected by C5[PRDIV0]
+   *  M is the multiplier selected by C6[VDIV0]
+   */
+
+  SIM->SOPT2 =
+          SIM_SOPT2_TPMSRC(1) | /* MCGFLLCLK clock or MCGPLLCLK/2 */
+          SIM_SOPT2_PLLFLLSEL;  /* MCGPLLCLK w/ fixed divide by 2 */
 
   /* EXTAL0 and XTAL0 */
   PORTA->PCR[18] &= ~0x01000700;
@@ -94,32 +107,43 @@ void kl2x_clock_init(void)
 
   OSC0->CR = 0;
 
-  MCG->C2  = 0x24;
-  MCG->C1  = 0x98;
-  MCG->C4 &= ~0xE0;
-  MCG->C5  = 0x01;
-  MCG->C6  = 0;
+  MCG->C2 =
+          MCG_C2_RANGE0(2) |
+          MCG_C2_EREFS0;
+  MCG->C1 =
+          MCG_C1_CLKS_ERCLK |  /* Use ERCLK for MCGCLKOUT */
+          MCG_C1_FRDIV(3);     /* Divide ERCLK / 256 for FLL */
+  MCG->C4 &= ~(MCG_C4_DMX32 | MCG_C4_DRST_DRS_MASK);
+  MCG->C5 = MCG_C5_PRDIV0(1);  /* PLL External Reference Divide by 2*/
+  MCG->C6 = 0;
 
   /* Check that the source of the FLL reference clock is
      the external reference clock. */
-  while ((MCG->S & 0x10) != 0)
+  while ((MCG->S & MCG_S_IREFST) != 0)
     ;
 
-  while ((MCG->S & 0x0C) != 8)      /* wait until external reference */
-    ;
+  while ((MCG->S & MCG_S_CLKST_MASK) != MCG_S_CLKST_ERCLK)
+    ;  /* Wait until external reference clock mode is activated*/
 
   /* PLL selected as MCG source */
-  MCG->C6 = 0x40;
-  while ((MCG->S & 0x40) == 0)     /* wait until PLL locked */
+  MCG->C6 = MCG_C6_PLLS;
+  while ((MCG->S & MCG_S_LOCK0) == 0)  /* wait until PLL locked */
     ;
 
   // Switch to PEE mode
   //    Select PLL output (CLKS=0)
   //    FLL external reference divider (FRDIV=3)
   //    External reference clock for FLL (IREFS=0)
-  MCG->C1 = 0x18;
-  while ((MCG->S & 0x0C) != 0x0C)  /* wait until PLL output */
-    ;
+  MCG->C1 = MCG_C1_CLKS(0) |
+            MCG_C1_FRDIV(3);
+  while ((MCG->S & MCG_S_CLKST_MASK) != MCG_S_CLKST_PLL)
+    ;  /* wait until clock switched to PLL output */
+
+#else /* KINETIS_MCG_MODE != KINETIS_MCG_MODE_PEE */
+#error Unimplemented KINETIS_MCG_MODE
+#endif /* KINETIS_MCG_MODE != KINETIS_MCG_MODE_PEE */
+
+#endif /* !KINETIS_NO_INIT */
 }
 
 /**

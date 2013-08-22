@@ -43,9 +43,56 @@
 #define PLATFORM_NAME           "Kinetis"
 /** @} */
 
+/**
+ * @brief   Maximum system and core clock (f_SYS) frequency.
+ */
+#define KINETIS_SYSCLK_MAX      48000000
+
+/**
+ * @brief   Maximum bus clock (f_BUS) frequency.
+ */
+#define KINETIS_BUSCLK_MAX      24000000
+
+/**
+ * @name    Internal clock sources
+ * @{
+ */
+#define KINETIS_IRCLK_F         4000000     /**< Fast internal reference clock, factory trimmed. */
+#define KINETIS_IRCLK_S         32768       /**< Slow internal reference clock, factory trimmed. */
+/** @} */
+
+#define KINETIS_MCG_MODE_FEI  1    /**< FLL Engaged Internal. */
+#define KINETIS_MCG_MODE_FEE  2    /**< FLL Engaged External. */
+#define KINETIS_MCG_MODE_FBI  3    /**< FLL Bypassed Internal. */
+#define KINETIS_MCG_MODE_FBE  4    /**< FLL Bypassed External. */
+#define KINETIS_MCG_MODE_PEE  5    /**< PLL Engaged External. */
+#define KINETIS_MCG_MODE_PBE  6    /**< PLL Bypassed External. */
+#define KINETIS_MCG_MODE_BLPI 7    /**< Bypassed Low Power Internal. */
+#define KINETIS_MCG_MODE_BLPE 8    /**< Bypassed Low Power External. */
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
+
+/**
+ * @name    Configuration options
+ * @{
+ */
+/**
+ * @brief   Disables the MCG/system clock initialization in the HAL.
+ */
+#if !defined(KINETIS_NO_INIT) || defined(__DOXYGEN__)
+#define KINETIS_NO_INIT             FALSE
+#endif
+
+/**
+ * @brief   MCG mode selection.
+ */
+#if !defined(KINETIS_MCG_MODE) || defined(__DOXYGEN__)
+#define KINETIS_MCG_MODE            KINETIS_MCG_MODE_PEE
+#endif
+
+/** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */

@@ -264,8 +264,9 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
 #if KINETIS_SERIAL_USE_UART0
     if (sdp == &SD1) {
       SIM->SCGC4 |= SIM_SCGC4_UART0;
-      SIM->SOPT2 &= ~SIM_SOPT2_UART0SRC;
-      SIM->SOPT2 |= (SIM_SOPT2_UART0SRC & ((uint32_t) 1 << SIM_SOPT2_UART0SRC_SHIFT));
+      SIM->SOPT2 =
+              (SIM->SOPT2 & ~SIM_SOPT2_UART0SRC_MASK) |
+              SIM_SOPT2_UART0SRC(1);
       configure_uart(sdp->uart, config);
       nvicEnableVector(UART0_IRQn, CORTEX_PRIORITY_MASK(KINETIS_SERIAL_UART0_PRIORITY));
     }
