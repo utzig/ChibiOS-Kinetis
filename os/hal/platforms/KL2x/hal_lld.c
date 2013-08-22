@@ -80,7 +80,9 @@ void kl2x_clock_init(void)
   /* Enable PORTA */
   SIM->SCGC5 |= SIM_SCGC5_PORTA;
 
-  /* OUTDIV1 / 2, OUTDIV4 / 2 */
+  /* The MCGOUTCLK is divided by OUTDIV1 and OUTDIV4:
+   * OUTDIV1 (divider for core/system and bus/flash clock)
+   * OUTDIV4 (additional divider for bus/flash clock) */
   SIM->CLKDIV1 =
 		  SIM_CLKDIV1_OUTDIV1(1) |  /* OUTDIV1 = divide-by-2 */
 		  SIM_CLKDIV1_OUTDIV4(1);   /* OUTDIV4 = divide-by-2 */
@@ -91,31 +93,36 @@ void kl2x_clock_init(void)
 #if KINETIS_MCG_MODE == KINETIS_MCG_MODE_PEE
   /*
    * PLL Enabled External (PEE) MCG Mode
-   * Using 8 MHz crystal with PLL.
+   * 48 MHz core, 24 MHz bus - using 8 MHz crystal with PLL.
    * f_MCGOUTCLK = (OSCCLK / PLL_R) * M
+   *             =  8 MHz / 2 * 24 = 96 MHz
    *  PLL_R is the reference divider selected by C5[PRDIV0]
    *  M is the multiplier selected by C6[VDIV0]
+   *
+   * Then the core/system and bus/flash clocks are divided:
+   *   f_SYS = f_MCGOUTCLK / OUTDIV1 = 96 MHz / 2 = 48 MHz
+   *   f_BUS = f_MCGOUTCLK / OUTDIV1 / OUTDIV4 = 96 MHz / 4 = 24 MHz
    */
 
   SIM->SOPT2 =
           SIM_SOPT2_TPMSRC(1) | /* MCGFLLCLK clock or MCGPLLCLK/2 */
-          SIM_SOPT2_PLLFLLSEL;  /* MCGPLLCLK w/ fixed divide by 2 */
+          SIM_SOPT2_PLLFLLSEL;  /* PLLFLLSEL=MCGPLLCLK/2 */
 
   /* EXTAL0 and XTAL0 */
-  PORTA->PCR[18] &= ~0x01000700;
-  PORTA->PCR[19] &= ~0x01000700;
+  PORTA->PCR[18] &= ~0x01000700; /* Set PA18 to analog (default) */
+  PORTA->PCR[19] &= ~0x01000700; /* Set PA19 to analog (default) */
 
   OSC0->CR = 0;
 
-  MCG->C2 =
-          MCG_C2_RANGE0(2) |
-          MCG_C2_EREFS0;
+  MCG->C2 = /* TODO[CDB] should we set HGO0 for high-gain xtal osc in PEE mode? [see KL25P80M48SF0RM sec 24.5.3.1] */
+          MCG_C2_RANGE0(2) |  /* very high frequency range */
+          MCG_C2_EREFS0;      /* external reference (using a crystal) */
   MCG->C1 =
           MCG_C1_CLKS_ERCLK |  /* Use ERCLK for MCGCLKOUT */
           MCG_C1_FRDIV(3);     /* Divide ERCLK / 256 for FLL */
   MCG->C4 &= ~(MCG_C4_DMX32 | MCG_C4_DRST_DRS_MASK);
-  MCG->C5 = MCG_C5_PRDIV0(1);  /* PLL External Reference Divide by 2*/
-  MCG->C6 = 0;
+  MCG->C5 = MCG_C5_PRDIV0(1);  /* PLL External Reference Divide by 2 */
+  MCG->C6 = 0;  /* PLLS=0: Select FLL as MCG source, not PLL */
 
   /* Check that the source of the FLL reference clock is
      the external reference clock. */
@@ -125,8 +132,8 @@ void kl2x_clock_init(void)
   while ((MCG->S & MCG_S_CLKST_MASK) != MCG_S_CLKST_ERCLK)
     ;  /* Wait until external reference clock mode is activated*/
 
-  /* PLL selected as MCG source */
-  MCG->C6 = MCG_C6_PLLS;
+  /* PLL selected as MCG source. VDIV0=00000 (Multiply=24). */
+  MCG->C6 = MCG_C6_PLLS | MCG_C6_VDIV0(0);
   while ((MCG->S & MCG_S_LOCK0) == 0)  /* wait until PLL locked */
     ;
 
