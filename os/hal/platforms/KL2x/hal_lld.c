@@ -57,7 +57,7 @@
 void hal_lld_init(void)
 {
   nvicSetSystemHandlerPriority(HANDLER_SYSTICK, CORTEX_PRIORITY_SYSTICK);
-  SysTick->LOAD = 48000000 / CH_FREQUENCY - 1;
+  SysTick->LOAD = CPU_FREQUENCY / CH_FREQUENCY - 1;
   SysTick->VAL = 0;
   SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk |
                   SysTick_CTRL_ENABLE_Msk |
@@ -76,7 +76,7 @@ void kl2x_clock_init(void)
   /* Disable COP watchdog */
   SIM->COPC = 0;
 
-  /* Enable PORTA (SWD_CLK) */
+  /* Enable PORTA */
   SIM->SCGC5 |= 0x00000200;
 
   /* OUTDIV1 / 2, OUTDIV4 / 2 */
