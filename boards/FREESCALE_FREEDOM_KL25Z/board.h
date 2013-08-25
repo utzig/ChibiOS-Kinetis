@@ -27,6 +27,8 @@
 #define BOARD_FREESCALE_FREEDOM_KL25Z
 #define BOARD_NAME                  "Freescale Freedom KL25Z"
 
+#define CPU_FREQUENCY   48000000UL
+
 
 #if !defined(_FROM_ASM_)
 #ifdef __cplusplus
