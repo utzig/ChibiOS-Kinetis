@@ -186,38 +186,38 @@ void pal_lld_setpadmode(ioportid_t port, uint8_t pad, iomode_t mode)
   case PAL_MODE_RESET:
   case PAL_MODE_INPUT:
   case PAL_MODE_OUTPUT_PUSHPULL:
-    portcfg->PCR[pad] = PIN_MUX_ALTERNATIVE(1);
+    portcfg->PCR[pad] = PORTx_PCRn_MUX(1);
     break;
   case PAL_MODE_INPUT_PULLUP:
-    portcfg->PCR[pad] = PIN_MUX_ALTERNATIVE(1) | PORTx_PRCn_PE | PORTx_PRCn_PS;
+    portcfg->PCR[pad] = PORTx_PCRn_MUX(1) | PORTx_PCRn_PE | PORTx_PCRn_PS;
     break;
   case PAL_MODE_INPUT_PULLDOWN:
-    portcfg->PCR[pad] = PIN_MUX_ALTERNATIVE(1) | PORTx_PRCn_PE;
+    portcfg->PCR[pad] = PORTx_PCRn_MUX(1) | PORTx_PCRn_PE;
     break;
   case PAL_MODE_UNCONNECTED:
   case PAL_MODE_INPUT_ANALOG:
-    portcfg->PCR[pad] = PIN_MUX_ALTERNATIVE(0);
+    portcfg->PCR[pad] = PORTx_PCRn_MUX(0);
     break;
   case PAL_MODE_ALTERNATIVE_1:
-    portcfg->PCR[pad] = PIN_MUX_ALTERNATIVE(1);
+    portcfg->PCR[pad] = PORTx_PCRn_MUX(1);
     break;
   case PAL_MODE_ALTERNATIVE_2:
-    portcfg->PCR[pad] = PIN_MUX_ALTERNATIVE(2);
+    portcfg->PCR[pad] = PORTx_PCRn_MUX(2);
     break;
   case PAL_MODE_ALTERNATIVE_3:
-    portcfg->PCR[pad] = PIN_MUX_ALTERNATIVE(3);
+    portcfg->PCR[pad] = PORTx_PCRn_MUX(3);
     break;
   case PAL_MODE_ALTERNATIVE_4:
-    portcfg->PCR[pad] = PIN_MUX_ALTERNATIVE(4);
+    portcfg->PCR[pad] = PORTx_PCRn_MUX(4);
     break;
   case PAL_MODE_ALTERNATIVE_5:
-    portcfg->PCR[pad] = PIN_MUX_ALTERNATIVE(5);
+    portcfg->PCR[pad] = PORTx_PCRn_MUX(5);
     break;
   case PAL_MODE_ALTERNATIVE_6:
-    portcfg->PCR[pad] = PIN_MUX_ALTERNATIVE(6);
+    portcfg->PCR[pad] = PORTx_PCRn_MUX(6);
     break;
   case PAL_MODE_ALTERNATIVE_7:
-    portcfg->PCR[pad] = PIN_MUX_ALTERNATIVE(7);
+    portcfg->PCR[pad] = PORTx_PCRn_MUX(7);
     break;
   }
 }

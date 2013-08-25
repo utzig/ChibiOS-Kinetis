@@ -122,6 +122,20 @@ typedef struct
 
 typedef struct
 {
+  __IO uint8_t  PE1;
+  __IO uint8_t  PE2;
+  __IO uint8_t  PE3;
+  __IO uint8_t  PE4;
+  __IO uint8_t  ME;
+  __IO uint8_t  F1;
+  __IO uint8_t  F2;
+  __I  uint8_t  F3;
+  __IO uint8_t  FILT1;
+  __IO uint8_t  FILT2;
+} LLWU_TypeDef;
+
+typedef struct
+{
   __IO uint32_t PCR[32];
   __IO uint32_t GPCLR;
   __IO uint32_t GPCHR;
@@ -156,6 +170,24 @@ typedef struct
 
 typedef struct
 {
+  __IO uint32_t  SAR;
+  __IO uint32_t  DAR;
+  __IO uint32_t  DSR_BCR;
+  __IO uint32_t  DCR;
+} DMAChannel_TypeDef;
+
+typedef struct
+{
+  DMAChannel_TypeDef ch[4];
+} DMA_TypeDef;
+
+typedef struct
+{
+  __IO uint8_t  CHCFG[4];
+} DMAMUX_TypeDef;
+
+typedef struct
+{
   __IO uint32_t SC;
   __IO uint32_t CNT;
   __IO uint32_t MOD;
@@ -176,6 +208,53 @@ typedef struct
        uint32_t RESERVED1[12];
   __IO uint32_t CONF;
 } TPM_TypeDef;
+
+typedef struct
+{
+  __IO uint32_t SC1A;           // offset: 0x00
+  __IO uint32_t SC1B;           // offset: 0x04
+  __IO uint32_t CFG1;           // offset: 0x08
+  __IO uint32_t CFG2;           // offset: 0x0C
+  __I  uint32_t RA;             // offset: 0x10
+  __I  uint32_t RB;             // offset: 0x14
+  __IO uint32_t CV1;            // offset: 0x18
+  __IO uint32_t CV2;            // offset: 0x1C
+  __IO uint32_t SC2;            // offset: 0x20
+  __IO uint32_t SC3;            // offset: 0x24
+  __IO uint32_t OFS;            // offset: 0x28
+  __IO uint32_t PG;             // offset: 0x2C
+  __IO uint32_t MG;             // offset: 0x30
+  __IO uint32_t CLPD;           // offset: 0x34
+  __IO uint32_t CLPS;           // offset: 0x38
+  __IO uint32_t CLP4;           // offset: 0x3C
+  __IO uint32_t CLP3;           // offset: 0x40
+  __IO uint32_t CLP2;           // offset: 0x44
+  __IO uint32_t CLP1;           // offset: 0x48
+  __IO uint32_t CLP0;           // offset: 0x4C
+       uint32_t RESERVED0[1];   // offset: 0x50
+  __IO uint32_t CLMD;           // offset: 0x54
+  __IO uint32_t CLMS;           // offset: 0x58
+  __IO uint32_t CLM4;           // offset: 0x5C
+  __IO uint32_t CLM3;           // offset: 0x60
+  __IO uint32_t CLM2;           // offset: 0x64
+  __IO uint32_t CLM1;           // offset: 0x68
+  __IO uint32_t CLM0;           // offset: 0x6C
+} ADC_TypeDef;
+
+typedef struct
+{
+  __IO uint32_t CSR;
+  __IO uint32_t PSR;
+  __IO uint32_t CMR;
+  __I  uint32_t CNR;
+} LPTMR_TypeDef;
+
+typedef struct
+{
+  __IO uint32_t GENCS;
+  __IO uint32_t DATA;
+  __IO uint32_t TSHD;
+} TSI_TypeDef;
 
 typedef struct
 {
@@ -247,9 +326,14 @@ typedef struct
 /****************************************************************/
 /*                  Peripheral memory map                       */
 /****************************************************************/
+#define DMA_BASE                ((uint32_t)0x40008100)
+#define DMAMUX_BASE             ((uint32_t)0x40021000)
 #define TPM0_BASE               ((uint32_t)0x40038000)
 #define TPM1_BASE               ((uint32_t)0x40039000)
 #define TPM2_BASE               ((uint32_t)0x4003A000)
+#define ADC0_BASE               ((uint32_t)0x4003B000)
+#define LPTMR0_BASE             ((uint32_t)0x40040000)
+#define TSI0_BASE               ((uint32_t)0x40045000)
 #define SIM_BASE                ((uint32_t)0x40047000)
 #define PORTA_BASE              ((uint32_t)0x40049000)
 #define PORTB_BASE              ((uint32_t)0x4004A000)
@@ -265,6 +349,7 @@ typedef struct
 #define UART2_BASE              ((uint32_t)0x4006C000)
 #define SPI0_BASE               ((uint32_t)0x40076000)
 #define SPI1_BASE               ((uint32_t)0x40077000)
+#define LLWU_BASE               ((uint32_t)0x4007C000)
 #define GPIOA_BASE              ((uint32_t)0x400FF000)
 #define GPIOB_BASE              ((uint32_t)0x400FF040)
 #define GPIOC_BASE              ((uint32_t)0x400FF080)
@@ -274,10 +359,16 @@ typedef struct
 /****************************************************************/
 /*                 Peripheral declaration                       */
 /****************************************************************/
+#define DMA                     ((DMA_TypeDef *)     DMA_BASE)
+#define DMAMUX                  ((DMAMUX_TypeDef *)  DMAMUX_BASE)
 #define TPM0                    ((TPM_TypeDef *)     TPM0_BASE)
 #define TPM1                    ((TPM_TypeDef *)     TPM1_BASE)
 #define TPM2                    ((TPM_TypeDef *)     TPM2_BASE)
+#define ADC0                    ((ADC_TypeDef *)     ADC0_BASE)
+#define LPTMR0                  ((LPTMR_TypeDef *)   LPTMR0_BASE)
+#define TSI0                    ((TSI_TypeDef *)     TSI0_BASE)
 #define SIM                     ((SIM_TypeDef  *)    SIM_BASE)
+#define LLWU                    ((LLWU_TypeDef  *)   LLWU_BASE)
 #define PORTA                   ((PORT_TypeDef  *)   PORTA_BASE)
 #define PORTB                   ((PORT_TypeDef  *)   PORTB_BASE)
 #define PORTC                   ((PORT_TypeDef  *)   PORTC_BASE)
@@ -350,20 +441,147 @@ typedef struct
 
 /****************************************************************/
 /*                                                              */
+/*              Low-Leakage Wakeup Unit (LLWU)                  */
+/*                                                              */
+/****************************************************************/
+/**********  Bits definition for LLWU_PE1 register  *************/
+#define LLWU_PE1_WUPE3_SHIFT        6                                                                          /*!< Wakeup Pin Enable for LLWU_P3 (shift) */
+#define LLWU_PE1_WUPE3_MASK         ((uint8_t)((uint8_t)0x03 << LLWU_PE1_WUPE3_SHIFT))                         /*!< Wakeup Pin Enable for LLWU_P3 (mask) */
+#define LLWU_PE1_WUPE3(x)           ((uint8_t)(((uint8_t)(x) << LLWU_PE1_WUPE3_SHIFT) & LLWU_PE1_WUPE3_MASK))  /*!< Wakeup Pin Enable for LLWU_P3 */
+#define LLWU_PE1_WUPE2_SHIFT        4                                                                          /*!< Wakeup Pin Enable for LLWU_P2 (shift) */
+#define LLWU_PE1_WUPE2_MASK         ((uint8_t)((uint8_t)0x03 << LLWU_PE1_WUPE2_SHIFT))                         /*!< Wakeup Pin Enable for LLWU_P2 (mask) */
+#define LLWU_PE1_WUPE2(x)           ((uint8_t)(((uint8_t)(x) << LLWU_PE1_WUPE2_SHIFT) & LLWU_PE1_WUPE2_MASK))  /*!< Wakeup Pin Enable for LLWU_P2 */
+#define LLWU_PE1_WUPE1_SHIFT        2                                                                          /*!< Wakeup Pin Enable for LLWU_P1 (shift) */
+#define LLWU_PE1_WUPE1_MASK         ((uint8_t)((uint8_t)0x03 << LLWU_PE1_WUPE1_SHIFT))                         /*!< Wakeup Pin Enable for LLWU_P1 (mask) */
+#define LLWU_PE1_WUPE1(x)           ((uint8_t)(((uint8_t)(x) << LLWU_PE1_WUPE1_SHIFT) & LLWU_PE1_WUPE1_MASK))  /*!< Wakeup Pin Enable for LLWU_P1 */
+#define LLWU_PE1_WUPE0_SHIFT        0                                                                          /*!< Wakeup Pin Enable for LLWU_P0 (shift) */
+#define LLWU_PE1_WUPE0_MASK         ((uint8_t)((uint8_t)0x03 << LLWU_PE1_WUPE0_SHIFT))                         /*!< Wakeup Pin Enable for LLWU_P0 (mask) */
+#define LLWU_PE1_WUPE0(x)           ((uint8_t)(((uint8_t)(x) << LLWU_PE1_WUPE0_SHIFT) & LLWU_PE1_WUPE0_MASK))  /*!< Wakeup Pin Enable for LLWU_P0 */
+
+/**********  Bits definition for LLWU_PE2 register  *************/
+#define LLWU_PE2_WUPE7_SHIFT        6                                                                          /*!< Wakeup Pin Enable for LLWU_P7 (shift) */
+#define LLWU_PE2_WUPE7_MASK         ((uint8_t)((uint8_t)0x03 << LLWU_PE2_WUPE7_SHIFT))                         /*!< Wakeup Pin Enable for LLWU_P7 (mask) */
+#define LLWU_PE2_WUPE7(x)           ((uint8_t)(((uint8_t)(x) << LLWU_PE2_WUPE7_SHIFT) & LLWU_PE2_WUPE7_MASK))  /*!< Wakeup Pin Enable for LLWU_P7 */
+#define LLWU_PE2_WUPE6_SHIFT        4                                                                          /*!< Wakeup Pin Enable for LLWU_P6 (shift) */
+#define LLWU_PE2_WUPE6_MASK         ((uint8_t)((uint8_t)0x03 << LLWU_PE2_WUPE6_SHIFT))                         /*!< Wakeup Pin Enable for LLWU_P6 (mask) */
+#define LLWU_PE2_WUPE6(x)           ((uint8_t)(((uint8_t)(x) << LLWU_PE2_WUPE6_SHIFT) & LLWU_PE2_WUPE6_MASK))  /*!< Wakeup Pin Enable for LLWU_P6 */
+#define LLWU_PE2_WUPE5_SHIFT        2                                                                          /*!< Wakeup Pin Enable for LLWU_P5 (shift) */
+#define LLWU_PE2_WUPE5_MASK         ((uint8_t)((uint8_t)0x03 << LLWU_PE2_WUPE5_SHIFT))                         /*!< Wakeup Pin Enable for LLWU_P5 (mask) */
+#define LLWU_PE2_WUPE5(x)           ((uint8_t)(((uint8_t)(x) << LLWU_PE2_WUPE5_SHIFT) & LLWU_PE2_WUPE5_MASK))  /*!< Wakeup Pin Enable for LLWU_P5 */
+#define LLWU_PE2_WUPE4_SHIFT        0                                                                          /*!< Wakeup Pin Enable for LLWU_P4 (shift) */
+#define LLWU_PE2_WUPE4_MASK         ((uint8_t)((uint8_t)0x03 << LLWU_PE2_WUPE4_SHIFT))                         /*!< Wakeup Pin Enable for LLWU_P4 (mask) */
+#define LLWU_PE2_WUPE4(x)           ((uint8_t)(((uint8_t)(x) << LLWU_PE2_WUPE4_SHIFT) & LLWU_PE2_WUPE4_MASK))  /*!< Wakeup Pin Enable for LLWU_P4 */
+
+/**********  Bits definition for LLWU_PE3 register  *************/
+#define LLWU_PE3_WUPE11_SHIFT       6                                                                            /*!< Wakeup Pin Enable for LLWU_P11 (shift) */
+#define LLWU_PE3_WUPE11_MASK        ((uint8_t)((uint8_t)0x03 << LLWU_PE3_WUPE11_SHIFT))                          /*!< Wakeup Pin Enable for LLWU_P11 (mask) */
+#define LLWU_PE3_WUPE11(x)          ((uint8_t)(((uint8_t)(x) << LLWU_PE3_WUPE11_SHIFT) & LLWU_PE3_WUPE11_MASK))  /*!< Wakeup Pin Enable for LLWU_P11 */
+#define LLWU_PE3_WUPE10_SHIFT       4                                                                            /*!< Wakeup Pin Enable for LLWU_P10 (shift) */
+#define LLWU_PE3_WUPE10_MASK        ((uint8_t)((uint8_t)0x03 << LLWU_PE3_WUPE10_SHIFT))                          /*!< Wakeup Pin Enable for LLWU_P10 (mask) */
+#define LLWU_PE3_WUPE10(x)          ((uint8_t)(((uint8_t)(x) << LLWU_PE3_WUPE10_SHIFT) & LLWU_PE3_WUPE10_MASK))  /*!< Wakeup Pin Enable for LLWU_P10 */
+#define LLWU_PE3_WUPE13_SHIFT        2                                                                          /*!< Wakeup Pin Enable for LLWU_P9 (shift) */
+#define LLWU_PE3_WUPE13_MASK         ((uint8_t)((uint8_t)0x03 << LLWU_PE3_WUPE13_SHIFT))                         /*!< Wakeup Pin Enable for LLWU_P9 (mask) */
+#define LLWU_PE3_WUPE13(x)           ((uint8_t)(((uint8_t)(x) << LLWU_PE3_WUPE13_SHIFT) & LLWU_PE3_WUPE13_MASK))  /*!< Wakeup Pin Enable for LLWU_P9 */
+#define LLWU_PE3_WUPE8_SHIFT        0                                                                          /*!< Wakeup Pin Enable for LLWU_P8 (shift) */
+#define LLWU_PE3_WUPE8_MASK         ((uint8_t)((uint8_t)0x03 << LLWU_PE3_WUPE8_SHIFT))                         /*!< Wakeup Pin Enable for LLWU_P8 (mask) */
+#define LLWU_PE3_WUPE8(x)           ((uint8_t)(((uint8_t)(x) << LLWU_PE3_WUPE8_SHIFT) & LLWU_PE3_WUPE8_MASK))  /*!< Wakeup Pin Enable for LLWU_P8 */
+
+/**********  Bits definition for LLWU_PE4 register  *************/
+#define LLWU_PE4_WUPE15_SHIFT       6                                                                            /*!< Wakeup Pin Enable for LLWU_P15 (shift) */
+#define LLWU_PE4_WUPE15_MASK        ((uint8_t)((uint8_t)0x03 << LLWU_PE4_WUPE15_SHIFT))                          /*!< Wakeup Pin Enable for LLWU_P15 (mask) */
+#define LLWU_PE4_WUPE15(x)          ((uint8_t)(((uint8_t)(x) << LLWU_PE4_WUPE15_SHIFT) & LLWU_PE4_WUPE15_MASK))  /*!< Wakeup Pin Enable for LLWU_P15 */
+#define LLWU_PE4_WUPE14_SHIFT       4                                                                            /*!< Wakeup Pin Enable for LLWU_P14 (shift) */
+#define LLWU_PE4_WUPE14_MASK        ((uint8_t)((uint8_t)0x03 << LLWU_PE4_WUPE14_SHIFT))                          /*!< Wakeup Pin Enable for LLWU_P14 (mask) */
+#define LLWU_PE4_WUPE14(x)          ((uint8_t)(((uint8_t)(x) << LLWU_PE4_WUPE14_SHIFT) & LLWU_PE4_WUPE14_MASK))  /*!< Wakeup Pin Enable for LLWU_P14 */
+#define LLWU_PE4_WUPE13_SHIFT       2                                                                            /*!< Wakeup Pin Enable for LLWU_P13 (shift) */
+#define LLWU_PE4_WUPE13_MASK        ((uint8_t)((uint8_t)0x03 << LLWU_PE4_WUPE13_SHIFT))                          /*!< Wakeup Pin Enable for LLWU_P13 (mask) */
+#define LLWU_PE4_WUPE13(x)          ((uint8_t)(((uint8_t)(x) << LLWU_PE4_WUPE13_SHIFT) & LLWU_PE4_WUPE13_MASK))  /*!< Wakeup Pin Enable for LLWU_P13 */
+#define LLWU_PE4_WUPE12_SHIFT       0                                                                            /*!< Wakeup Pin Enable for LLWU_P12 (shift) */
+#define LLWU_PE4_WUPE12_MASK        ((uint8_t)((uint8_t)0x03 << LLWU_PE4_WUPE12_SHIFT))                          /*!< Wakeup Pin Enable for LLWU_P12 (mask) */
+#define LLWU_PE4_WUPE12(x)          ((uint8_t)(((uint8_t)(x) << LLWU_PE4_WUPE12_SHIFT) & LLWU_PE4_WUPE12_MASK))  /*!< Wakeup Pin Enable for LLWU_P12 */
+
+/**********  Bits definition for LLWU_ME register  *************/
+#define LLWU_ME_WUME7               ((uint8_t)((uint8_t)1 << 7))    /*!< Wakeup Module Enable for Module 7 */
+#define LLWU_ME_WUME6               ((uint8_t)((uint8_t)1 << 6))    /*!< Wakeup Module Enable for Module 6 */
+#define LLWU_ME_WUME5               ((uint8_t)((uint8_t)1 << 5))    /*!< Wakeup Module Enable for Module 5 */
+#define LLWU_ME_WUME4               ((uint8_t)((uint8_t)1 << 4))    /*!< Wakeup Module Enable for Module 4 */
+#define LLWU_ME_WUME3               ((uint8_t)((uint8_t)1 << 3))    /*!< Wakeup Module Enable for Module 3 */
+#define LLWU_ME_WUME2               ((uint8_t)((uint8_t)1 << 2))    /*!< Wakeup Module Enable for Module 2 */
+#define LLWU_ME_WUME1               ((uint8_t)((uint8_t)1 << 1))    /*!< Wakeup Module Enable for Module 1 */
+#define LLWU_ME_WUME0               ((uint8_t)((uint8_t)1 << 0))    /*!< Wakeup Module Enable for Module 0 */
+
+/**********  Bits definition for LLWU_F1 register  *************/
+#define LLWU_F1_WUF7                ((uint8_t)((uint8_t)1 << 7))    /*!< Wakeup Flag for LLWU_P7 */
+#define LLWU_F1_WUF6                ((uint8_t)((uint8_t)1 << 6))    /*!< Wakeup Flag for LLWU_P6 */
+#define LLWU_F1_WUF5                ((uint8_t)((uint8_t)1 << 5))    /*!< Wakeup Flag for LLWU_P5 */
+#define LLWU_F1_WUF4                ((uint8_t)((uint8_t)1 << 4))    /*!< Wakeup Flag for LLWU_P4 */
+#define LLWU_F1_WUF3                ((uint8_t)((uint8_t)1 << 3))    /*!< Wakeup Flag for LLWU_P3 */
+#define LLWU_F1_WUF2                ((uint8_t)((uint8_t)1 << 2))    /*!< Wakeup Flag for LLWU_P2 */
+#define LLWU_F1_WUF1                ((uint8_t)((uint8_t)1 << 1))    /*!< Wakeup Flag for LLWU_P1 */
+#define LLWU_F1_WUF0                ((uint8_t)((uint8_t)1 << 0))    /*!< Wakeup Flag for LLWU_P0 */
+
+/**********  Bits definition for LLWU_F2 register  *************/
+#define LLWU_F2_WUF15               ((uint8_t)((uint8_t)1 << 7))    /*!< Wakeup Flag for LLWU_P15 */
+#define LLWU_F2_WUF14               ((uint8_t)((uint8_t)1 << 6))    /*!< Wakeup Flag for LLWU_P14 */
+#define LLWU_F2_WUF13               ((uint8_t)((uint8_t)1 << 5))    /*!< Wakeup Flag for LLWU_P13 */
+#define LLWU_F2_WUF12               ((uint8_t)((uint8_t)1 << 4))    /*!< Wakeup Flag for LLWU_P12 */
+#define LLWU_F2_WUF11               ((uint8_t)((uint8_t)1 << 3))    /*!< Wakeup Flag for LLWU_P11 */
+#define LLWU_F2_WUF10               ((uint8_t)((uint8_t)1 << 2))    /*!< Wakeup Flag for LLWU_P10 */
+#define LLWU_F2_WUF9                ((uint8_t)((uint8_t)1 << 1))    /*!< Wakeup Flag for LLWU_P9 */
+#define LLWU_F2_WUF8                ((uint8_t)((uint8_t)1 << 0))    /*!< Wakeup Flag for LLWU_P8 */
+
+/**********  Bits definition for LLWU_F3 register  *************/
+#define LLWU_F3_MWUF7               ((uint8_t)((uint8_t)1 << 7))    /*!< Wakeup Flag for Module 7 */
+#define LLWU_F3_MWUF6               ((uint8_t)((uint8_t)1 << 6))    /*!< Wakeup Flag for Module 6 */
+#define LLWU_F3_MWUF5               ((uint8_t)((uint8_t)1 << 5))    /*!< Wakeup Flag for Module 5 */
+#define LLWU_F3_MWUF4               ((uint8_t)((uint8_t)1 << 4))    /*!< Wakeup Flag for Module 4 */
+#define LLWU_F3_MWUF3               ((uint8_t)((uint8_t)1 << 3))    /*!< Wakeup Flag for Module 3 */
+#define LLWU_F3_MWUF2               ((uint8_t)((uint8_t)1 << 2))    /*!< Wakeup Flag for Module 2 */
+#define LLWU_F3_MWUF1               ((uint8_t)((uint8_t)1 << 1))    /*!< Wakeup Flag for Module 1 */
+#define LLWU_F3_MWUF0               ((uint8_t)((uint8_t)1 << 0))    /*!< Wakeup Flag for Module 0 */
+
+/**********  Bits definition for LLWU_FILT1 register  *************/
+#define LLWU_FILT1_FILTF            ((uint8_t)((uint8_t)1 << 7))    /*!< Filter Detect Flag */
+#define LLWU_FILT1_FILTE_SHIFT      5                                                                              /*!< Digital Filter on External Pin (shift) */
+#define LLWU_FILT1_FILTE_MASK       ((uint8_t)((uint8_t)0x03 << LLWU_FILT1_FILTE_SHIFT))                           /*!< Digital Filter on External Pin (mask) */
+#define LLWU_FILT1_FILTE(x)         ((uint8_t)(((uint8_t)(x) << LLWU_FILT1_FILTE_SHIFT) & LLWU_FILT1_FILTE_MASK))  /*!< Digital Filter on External Pin */
+#define LLWU_FILT1_FILTE_DISABLED   LLWU_FILT1_FILTE(0)  /*!< Filter disabled */
+#define LLWU_FILT1_FILTE_POSEDGE    LLWU_FILT1_FILTE(1)  /*!< Filter posedge detect enabled */
+#define LLWU_FILT1_FILTE_NEGEDGE    LLWU_FILT1_FILTE(2)  /*!< Filter negedge detect enabled */
+#define LLWU_FILT1_FILTE_ANYEDGE    LLWU_FILT1_FILTE(3)  /*!< Filter any edge detect enabled */
+#define LLWU_FILT1_FILTSEL_SHIFT    0                                                                                  /*!< Filter Pin Select (LLWU_P0 ... LLWU_P15) (shift) */
+#define LLWU_FILT1_FILTSEL_MASK     ((uint8_t)((uint8_t)0x0F << LLWU_FILT1_FILTSEL_SHIFT))                             /*!< Filter Pin Select (LLWU_P0 ... LLWU_P15) (mask) */
+#define LLWU_FILT1_FILTSEL(x)       ((uint8_t)(((uint8_t)(x) << LLWU_FILT1_FILTSEL_SHIFT) & LLWU_FILT1_FILTSEL_MASK))  /*!< Filter Pin Select (LLWU_P0 ... LLWU_P15) */
+
+/**********  Bits definition for LLWU_FILT2 register  *************/
+#define LLWU_FILT2_FILTF            ((uint8_t)((uint8_t)1 << 7))    /*!< Filter Detect Flag */
+#define LLWU_FILT2_FILTE_SHIFT      5                                                                              /*!< Digital Filter on External Pin (shift) */
+#define LLWU_FILT2_FILTE_MASK       ((uint8_t)((uint8_t)0x03 << LLWU_FILT2_FILTE_SHIFT))                           /*!< Digital Filter on External Pin (mask) */
+#define LLWU_FILT2_FILTE(x)         ((uint8_t)(((uint8_t)(x) << LLWU_FILT2_FILTE_SHIFT) & LLWU_FILT2_FILTE_MASK))  /*!< Digital Filter on External Pin */
+#define LLWU_FILT2_FILTE_DISABLED   LLWU_FILT2_FILTE(0)  /*!< Filter disabled */
+#define LLWU_FILT2_FILTE_POSEDGE    LLWU_FILT2_FILTE(1)  /*!< Filter posedge detect enabled */
+#define LLWU_FILT2_FILTE_NEGEDGE    LLWU_FILT2_FILTE(2)  /*!< Filter negedge detect enabled */
+#define LLWU_FILT2_FILTE_ANYEDGE    LLWU_FILT2_FILTE(3)  /*!< Filter any edge detect enabled */
+#define LLWU_FILT2_FILTSEL_SHIFT    0                                                                                  /*!< Filter Pin Select (LLWU_P0 ... LLWU_P15) (shift) */
+#define LLWU_FILT2_FILTSEL_MASK     ((uint8_t)((uint8_t)0x0F << LLWU_FILT2_FILTSEL_SHIFT))                             /*!< Filter Pin Select (LLWU_P0 ... LLWU_P15) (mask) */
+#define LLWU_FILT2_FILTSEL(x)       ((uint8_t)(((uint8_t)(x) << LLWU_FILT2_FILTSEL_SHIFT) & LLWU_FILT2_FILTSEL_MASK))  /*!< Filter Pin Select (LLWU_P0 ... LLWU_P15) */
+
+/****************************************************************/
+/*                                                              */
 /*           Port Control and interrupts (PORT)                 */
 /*                                                              */
 /****************************************************************/
 /********  Bits definition for PORTx_PCRn register  *************/
-#define PORTx_PRCn_ISR               ((uint32_t)0x01000000)    /*!< Interrupt Status Flag */
-#define PORTx_PRCn_IRQC              ((uint32_t)0x000F0000)    /*!< Interrupt Configuration */
-#define PORTx_PRCn_MUX               ((uint32_t)0x00000700)    /*!< Pin Mux Control */
-#define PORTx_PRCn_DSE               ((uint32_t)0x00000040)    /*!< Drive Strength Enable */
-#define PORTx_PRCn_PFE               ((uint32_t)0x00000010)    /*!< Passive Filter Enable */
-#define PORTx_PRCn_SRE               ((uint32_t)0x00000004)    /*!< Slew Rate Enable */
-#define PORTx_PRCn_PE                ((uint32_t)0x00000002)    /*!< Pull Enable */
-#define PORTx_PRCn_PS                ((uint32_t)0x00000001)    /*!< Pull Select */
-
-#define PORTx_PRCn_MUX_SHIFT         8
+#define PORTx_PCRn_ISR               ((uint32_t)0x01000000)    /*!< Interrupt Status Flag */
+#define PORTx_PCRn_IRQC              ((uint32_t)0x000F0000)    /*!< Interrupt Configuration */
+#define PORTx_PCRn_MUX_SHIFT         8                         /*!< Pin Mux Control (shift) */
+#define PORTx_PCRn_MUX_MASK          ((uint32_t)0x00000700)    /*!< Pin Mux Control (mask) */
+#define PORTx_PCRn_MUX(x)            ((uint32_t)(((uint32_t)(x) << PORTx_PCRn_MUX_SHIFT) & PORTx_PCRn_MUX_MASK))  /*!< Pin Mux Control */
+#define PORTx_PCRn_DSE               ((uint32_t)0x00000040)    /*!< Drive Strength Enable */
+#define PORTx_PCRn_PFE               ((uint32_t)0x00000010)    /*!< Passive Filter Enable */
+#define PORTx_PCRn_SRE               ((uint32_t)0x00000004)    /*!< Slew Rate Enable */
+#define PORTx_PCRn_PE                ((uint32_t)0x00000002)    /*!< Pull Enable */
+#define PORTx_PCRn_PS                ((uint32_t)0x00000001)    /*!< Pull Select */
 
 /****************************************************************/
 /*                                                              */
@@ -377,6 +595,322 @@ typedef struct
 #define OSC_CR_SC4P                  ((uint8_t)0x04)    /*!< Oscillator 4pF Capacitor Load Configure */
 #define OSC_CR_SC8P                  ((uint8_t)0x02)    /*!< Oscillator 8pF Capacitor Load Configure */
 #define OSC_CR_SC16P                 ((uint8_t)0x01)    /*!< Oscillator 16pF Capacitor Load Configure */
+
+/****************************************************************/
+/*                                                              */
+/*                 Direct Memory Access (DMA)                   */
+/*                                                              */
+/****************************************************************/
+/***********  Bits definition for DMA_BCRn register  ************/
+#define DMA_DSR_BCRn_CE          ((uint32_t)((uint32_t)1 << 30))    /*!< Configuration Error */
+#define DMA_DSR_BCRn_BES         ((uint32_t)((uint32_t)1 << 29))    /*!< Bus Error on Source */
+#define DMA_DSR_BCRn_BED         ((uint32_t)((uint32_t)1 << 28))    /*!< Bus Error on Destination */
+#define DMA_DSR_BCRn_REQ         ((uint32_t)((uint32_t)1 << 26))    /*!< Request */
+#define DMA_DSR_BCRn_BSY         ((uint32_t)((uint32_t)1 << 25))    /*!< Busy */
+#define DMA_DSR_BCRn_DONE        ((uint32_t)((uint32_t)1 << 24))    /*!< Transactions done */
+#define DMA_DSR_BCRn_BCR_SHIFT   0                                                                                /*!< Bytes yet to be transferred for block (shift) */
+#define DMA_DSR_BCRn_BCR_MASK    ((uint32_t)((uint32_t)0x00FFFFFF << DMA_DSR_BCRn_BCR_SHIFT))                     /*!< Bytes yet to be transferred for block (mask) */
+#define DMA_DSR_BCRn_BCR(x)      ((uint32_t)(((uint32_t)(x) << DMA_DSR_BCRn_BCR_SHIFT) & DMA_DSR_BCRn_BCR_MASK))  /*!< Bytes yet to be transferred for block */
+
+/***********  Bits definition for DMA_DCRn register  ************/
+#define DMA_DCRn_EINT            ((uint32_t)((uint32_t)1 << 31))         /*!< Enable interrupt on completion of transfer */
+#define DMA_DCRn_ERQ             ((uint32_t)((uint32_t)1 << 30))         /*!< Enable peripheral request */
+#define DMA_DCRn_CS              ((uint32_t)((uint32_t)1 << 29))         /*!< Cycle steal */
+#define DMA_DCRn_AA              ((uint32_t)((uint32_t)1 << 28))         /*!< Auto-align */
+#define DMA_DCRn_EADREQ          ((uint32_t)((uint32_t)1 << 23))         /*!< Enable asynchronous DMA requests */
+#define DMA_DCRn_SINC            ((uint32_t)((uint32_t)1 << 22))        /*!< Source increment */
+#define DMA_DCRn_SSIZE_SHIFT     20                                                               /*!< Source size (shift) */
+#define DMA_DCRn_SSIZE_MASK      ((uint32_t)((uint32_t)0x03 << DMA_DCRn_SSIZE_SHIFT))                         /*!< Source size (mask) */
+#define DMA_DCRn_SSIZE(x)        ((uint32_t)(((uint32_t)(x) << DMA_DCRn_SSIZE_SHIFT) & DMA_DCRn_SSIZE_MASK))  /*!< Source size */
+#define DMA_DCRn_DINC            ((uint32_t)((uint32_t)1 << 19))                                              /*!< Destination increment */
+#define DMA_DCRn_DSIZE_SHIFT     17                                                                           /*!< Destination size (shift) */
+#define DMA_DCRn_DSIZE_MASK      ((uint32_t)((uint32_t)0x03 << DMA_DCRn_DSIZE_SHIFT))                         /*!< Destination size (mask) */
+#define DMA_DCRn_DSIZE(x)        ((uint32_t)(((uint32_t)(x) << DMA_DCRn_DSIZE_SHIFT) & DMA_DCRn_DSIZE_MASK))  /*!< Destination size */
+#define DMA_DCRn_START           ((uint32_t)((uint32_t)1 << 16))                                            /*!< Start transfer */
+#define DMA_DCRn_SMOD_SHIFT      12                                                                         /*!< Source address modulo (shift) */
+#define DMA_DCRn_SMOD_MASK       ((uint32_t)((uint32_t)0x0F << DMA_DCRn_SMOD_SHIFT))                        /*!< Source address modulo (mask) */
+#define DMA_DCRn_SMOD(x)         ((uint32_t)(((uint32_t)(x) << DMA_DCRn_SMOD_SHIFT) & DMA_DCRn_SMOD_MASK))  /*!< Source address modulo */
+#define DMA_DCRn_DMOD_SHIFT      8                                                                          /*!< Destination address modulo (shift) */
+#define DMA_DCRn_DMOD_MASK       ((uint32_t)0x0F << DMA_DCRn_DMOD_SHIFT)                                    /*!< Destination address modulo (mask) */
+#define DMA_DCRn_DMOD(x)         ((uint32_t)(((uint32_t)(x) << DMA_DCRn_DMOD_SHIFT) & DMA_DCRn_DMOD_MASK))  /*!< Destination address modulo */
+#define DMA_DCRn_D_REQ           ((uint32_t)((uint32_t)1 <<  7))                                            /*!< Disable request */
+#define DMA_DCRn_LINKCC_SHIFT    4                                                                              /*!< Link channel control (shift) */
+#define DMA_DCRn_LINKCC_MASK     ((uint32_t)((uint32_t)0x03 << DMA_DCRn_LINKCC_SHIFT))                          /*!< Link channel control (mask) */
+#define DMA_DCRn_LINKCC(x)       ((uint32_t)(((uint32_t)(x) << DMA_DCRn_LINKCC_SHIFT) & DMA_DCRn_LINKCC_MASK))  /*!< Link channel control */
+#define DMA_DCRn_LCH1_SHIFT      2                                                                          /*!< Link channel 1 (shift) */
+#define DMA_DCRn_LCH1_MASK       ((uint32_t)((uint32_t)0x03 << DMA_DCRn_LCH1_SHIFT))                        /*!< Link channel 1 (mask) */
+#define DMA_DCRn_LCH1(x)         ((uint32_t)(((uint32_t)(x) << DMA_DCRn_LCH1_SHIFT) & DMA_DCRn_LCH1_MASK))  /*!< Link channel 1 */
+#define DMA_DCRn_LCH2_SHIFT      0                                                                          /*!< Link channel 2 (shift) */
+#define DMA_DCRn_LCH2_MASK       ((uint32_t)((uint32_t)0x03 << DMA_DCRn_LCH2_SHIFT))                        /*!< Link channel 2 (mask) */
+#define DMA_DCRn_LCH2(x)         ((uint32_t)(((uint32_t)(x) << DMA_DCRn_LCH2_SHIFT) & DMA_DCRn_LCH2_MASK))  /*!< Link channel 2 */
+
+/****************************************************************/
+/*                                                              */
+/*         Direct Memory Access Multiplexer (DMAMUX)            */
+/*                                                              */
+/****************************************************************/
+/********  Bits definition for DMAMUX_CHCFGn register  **********/
+#define DMAMUX_CHCFGn_ENBL           ((uint8_t)((uint8_t)1 << 7))  /*!< DMA Channel Enable */
+#define DMAMUX_CHCFGn_TRIG           ((uint8_t)((uint8_t)1 << 6))  /*!< DMA Channel Trigger Enable */
+#define DMAMUX_CHCFGn_SOURCE_SHIFT   0                                                                                      /*!< DMA Channel Source (Slot) (shift) */
+#define DMAMUX_CHCFGn_SOURCE_MASK    ((uint8_t)((uint8_t)0x3F << DMAMUX_CHCFGn_SOURCE_SHIFT))                               /*!< DMA Channel Source (Slot) (mask) */
+#define DMAMUX_CHCFGn_SOURCE(x)      ((uint8_t)(((uint8_t)(x) << DMAMUX_CHCFGn_SOURCE_SHIFT) & DMAMUX_CHCFGn_SOURCE_MASK))  /*!< DMA Channel Source (Slot) */
+
+/****************************************************************/
+/*                                                              */
+/*              Analog-to-Digital Converter (ADC)               */
+/*                                                              */
+/****************************************************************/
+/***********  Bits definition for ADCx_SC1n register  ***********/
+#define ADCx_SC1n_COCO          ((uint32_t)((uint32_t)1 << 7))  /*!< Conversion Complete Flag */
+#define ADCx_SC1n_AIEN          ((uint32_t)((uint32_t)1 << 6))  /*!< Interrupt Enable */
+#define ADCx_SC1n_DIFF          ((uint32_t)((uint32_t)1 << 5))  /*!< Differential Mode Enable */
+#define ADCx_SC1n_ADCH_SHIFT    0                                                                            /*!< Input channel select (shift) */
+#define ADCx_SC1n_ADCH_MASK     ((uint32_t)((uint32_t)0x1F << ADCx_SC1n_ADCH_SHIFT))                         /*!< Input channel select (mask) */
+#define ADCx_SC1n_ADCH(x)       ((uint32_t)(((uint32_t)(x) << ADCx_SC1n_ADCH_SHIFT) & ADCx_SC1n_ADCH_MASK))  /*!< Input channel select */
+
+/***********  Bits definition for ADCx_CFG1 register  ***********/
+#define ADCx_CFG1_ADLPC         ((uint32_t)((uint32_t)1 << 7))  /*!< Low-Power Configuration */
+#define ADCx_CFG1_ADIV_SHIFT    5                                                                            /*!< Clock Divide Select (shift) */
+#define ADCx_CFG1_ADIV_MASK     ((uint32_t)((uint32_t)0x03 << ADCx_CFG1_ADIV_SHIFT))                         /*!< Clock Divide Select (mask) */
+#define ADCx_CFG1_ADIV(x)       ((uint32_t)(((uint32_t)(x) << ADCx_CFG1_ADIV_SHIFT) & ADCx_CFG1_ADIV_MASK))  /*!< Clock Divide Select */
+#define ADCx_CFG1_ADLSMP        ((uint32_t)((uint32_t)1 << 4))  /*!< Sample time configuration */
+#define ADCx_CFG1_MODE_SHIFT    2                                                                            /*!< Conversion mode (resolution) selection (shift) */
+#define ADCx_CFG1_MODE_MASK     ((uint32_t)((uint32_t)0x03 << ADCx_CFG1_MODE_SHIFT))                         /*!< Conversion mode (resolution) selection (mask) */
+#define ADCx_CFG1_MODE(x)       ((uint32_t)(((uint32_t)(x) << ADCx_CFG1_MODE_SHIFT) & ADCx_CFG1_MODE_MASK))  /*!< Conversion mode (resolution) selection */
+#define ADCx_CFG1_ADICLK_SHIFT  0                                                                                /*!< Input Clock Select (shift) */
+#define ADCx_CFG1_ADICLK_MASK   ((uint32_t)((uint32_t)0x03 << ADCx_CFG1_ADICLK_SHIFT))                           /*!< Input Clock Select (mask) */
+#define ADCx_CFG1_ADICLK(x)     ((uint32_t)(((uint32_t)(x) << ADCx_CFG1_ADICLK_SHIFT) & ADCx_CFG1_ADICLK_MASK))  /*!< Input Clock Select */
+
+/***********  Bits definition for ADCx_CFG2 register  ***********/
+#define ADCx_CFG2_MUXSEL        ((uint32_t)((uint32_t)1 << 4))  /*!< ADC Mux Select */
+#define ADCx_CFG2_ADACKEN       ((uint32_t)((uint32_t)1 << 3))  /*!< Asynchronous Clock Output Enable */
+#define ADCx_CFG2_ADHSC         ((uint32_t)((uint32_t)1 << 2))  /*!< High-Speed Configuration */
+#define ADCx_CFG2_ADLSTS_SHIFT  0                                                                                /*!< Long Sample Time Select (shift) */
+#define ADCx_CFG2_ADLSTS_MASK   ((uint32_t)((uint32_t)0x03 << ADCx_CFG2_ADLSTS_SHIFT))                           /*!< Long Sample Time Select (mask) */
+#define ADCx_CFG2_ADLSTS(x)     ((uint32_t)(((uint32_t)(x) << ADCx_CFG2_ADLSTS_SHIFT) & ADCx_CFG2_ADLSTS_MASK))  /*!< Long Sample Time Select */
+
+/***********  Bits definition for ADCx_SC2 register  ***********/
+#define ADCx_SC2_ADACT          ((uint32_t)((uint32_t)1 << 7))  /*!< Conversion Active */
+#define ADCx_SC2_ADTRG          ((uint32_t)((uint32_t)1 << 6))  /*!< Conversion Trigger Select */
+#define ADCx_SC2_ACFE           ((uint32_t)((uint32_t)1 << 5))  /*!< Compare Function Enable */
+#define ADCx_SC2_ACFGT          ((uint32_t)((uint32_t)1 << 4))  /*!< Compare Function Greater Than Enable */
+#define ADCx_SC2_ACREN          ((uint32_t)((uint32_t)1 << 3))  /*!< Compare Function Range Enable */
+#define ADCx_SC2_DMAEN          ((uint32_t)((uint32_t)1 << 2))  /*!< DMA Enable */
+#define ADCx_SC2_REFSEL_SHIFT   0                                                                              /*!< Voltage Reference Selection (shift) */
+#define ADCx_SC2_REFSEL_MASK    ((uint32_t)((uint32_t)0x03 << ADCx_SC2_REFSEL_SHIFT))                          /*!< Voltage Reference Selection (mask) */
+#define ADCx_SC2_REFSEL(x)      ((uint32_t)(((uint32_t)(x) << ADCx_SC2_REFSEL_SHIFT) & ADCx_SC2_REFSEL_MASK))  /*!< Voltage Reference Selection */
+
+/***********  Bits definition for ADCx_SC3 register  ***********/
+#define ADCx_SC3_CAL            ((uint32_t)((uint32_t)1 << 7))  /*!< Calibration */
+#define ADCx_SC3_CALF           ((uint32_t)((uint32_t)1 << 6))  /*!< Calibration Failed Flag */
+#define ADCx_SC3_ADCO           ((uint32_t)((uint32_t)1 << 3))  /*!< Continuous Conversion Enable */
+#define ADCx_SC3_AVGE           ((uint32_t)((uint32_t)1 << 2))  /*!< Hardware Average Enable */
+#define ADCx_SC3_AVGS_SHIFT     0                                                                          /*!< Hardware Average Select (shift) */
+#define ADCx_SC3_AVGS_MASK      ((uint32_t)((uint32_t)0x03 << ADCx_SC3_AVGS_SHIFT))                        /*!< Hardware Average Select (mask) */
+#define ADCx_SC3_AVGS(x)        ((uint32_t)(((uint32_t)(x) << ADCx_SC3_AVGS_SHIFT) & ADCx_SC3_AVGS_MASK))  /*!< Hardware Average Select */
+
+/****************************************************************/
+/*                                                              */
+/*                   Low-Power Timer (LPTMR)                    */
+/*                                                              */
+/****************************************************************/
+/**********  Bits definition for LPTMRx_CSR register  ***********/
+#define LPTMRx_CSR_TCF              ((uint32_t)((uint32_t)1 << 7))  /*!< Timer Compare Flag */
+#define LPTMRx_CSR_TIE              ((uint32_t)((uint32_t)1 << 6))  /*!< Timer Interrupt Enable */
+#define LPTMRx_CSR_TPS_SHIFT        4                                                                            /*!< Timer Pin Select (shift) */
+#define LPTMRx_CSR_TPS_MASK         ((uint32_t)((uint32_t)0x03 << LPTMRx_CSR_TPS_SHIFT))                         /*!< Timer Pin Select (mask) */
+#define LPTMRx_CSR_TPS(x)           ((uint32_t)(((uint32_t)(x) << LPTMRx_CSR_TPS_SHIFT) & LPTMRx_CSR_TPS_MASK))  /*!< Timer Pin Select */
+#define LPTMRx_CSR_TPP              ((uint32_t)((uint32_t)1 << 3))  /*!< Timer Pin Polarity */
+#define LPTMRx_CSR_TFC              ((uint32_t)((uint32_t)1 << 2))  /*!< Timer Free-Running Counter */
+#define LPTMRx_CSR_TMS              ((uint32_t)((uint32_t)1 << 1))  /*!< Timer Mode Select */
+#define LPTMRx_CSR_TEN              ((uint32_t)((uint32_t)1 << 0))  /*!< Timer Enable */
+
+/**********  Bits definition for LPTMRx_PSR register  ***********/
+#define LPTMRx_PSR_PRESCALE_SHIFT   3                                                                                      /*!< Prescale Value (shift) */
+#define LPTMRx_PSR_PRESCALE_MASK    ((uint32_t)((uint32_t)0x0F << LPTMRx_PSR_PRESCALE_SHIFT))                              /*!< Prescale Value (mask) */
+#define LPTMRx_PSR_PRESCALE(x)      ((uint32_t)(((uint32_t)(x) << LPTMRx_PSR_PRESCALE_SHIFT) & LPTMRx_PSR_PRESCALE_MASK))  /*!< Prescale Value */
+#define LPTMRx_PSR_PBYP             ((uint32_t)((uint32_t)1 << 2))  /*!< Prescaler Bypass */
+#define LPTMRx_PSR_PCS_SHIFT        0                                                                            /*!< Prescaler Clock Select (shift) */
+#define LPTMRx_PSR_PCS_MASK         ((uint32_t)((uint32_t)0x03 << LPTMRx_PSR_PCS_SHIFT))                         /*!< Prescaler Clock Select (mask) */
+#define LPTMRx_PSR_PCS(x)           ((uint32_t)(((uint32_t)(x) << LPTMRx_PSR_PCS_SHIFT) & LPTMRx_PSR_PCS_MASK))  /*!< Prescaler Clock Select */
+
+/**********  Bits definition for LPTMRx_CMR register  ***********/
+#define LPTMRx_CMR_COMPARE_SHIFT    0                                                                                    /*!< Compare Value (shift) */
+#define LPTMRx_CMR_COMPARE_MASK     ((uint32_t)((uint32_t)0xFFFF << LPTMRx_CMR_COMPARE_SHIFT))                           /*!< Compare Value (mask) */
+#define LPTMRx_CMR_COMPARE(x)       ((uint32_t)(((uint32_t)(x) << LPTMRx_CMR_COMPARE_SHIFT) & LPTMRx_CMR_COMPARE_MASK))  /*!< Compare Value */
+
+/**********  Bits definition for LPTMRx_CNR register  ***********/
+#define LPTMRx_CNR_COUNTER_SHIFT    0                                                                                    /*!< Counter Value (shift) */
+#define LPTMRx_CNR_COUNTER_MASK     ((uint32_t)((uint32_t)0xFFFF << LPTMRx_CNR_COUNTER_SHIFT))                           /*!< Counter Value (mask) */
+#define LPTMRx_CNR_COUNTER(x)       ((uint32_t)(((uint32_t)(x) << LPTMRx_CNR_COUNTER_SHIFT) & LPTMRx_CNR_COUNTER_MASK))  /*!< Counter Value */
+
+/****************************************************************/
+/*                                                              */
+/*                  Touch Sensing Input (TSI)                   */
+/*                                                              */
+/****************************************************************/
+/**********  Bits definition for TSIx_GENCS register  ***********/
+#define TSIx_GENCS_OUTRGF           ((uint32_t)((uint32_t)1 << 31))  /*!< Out of Range Flag */
+#define TSIx_GENCS_ESOR             ((uint32_t)((uint32_t)1 << 28))  /*!< End-of-scan/Out-of-Range Interrupt Selection */
+#define TSIx_GENCS_MODE_SHIFT       24                                                                                 /*!< TSI analog modes setup and status bits (shift) */
+#define TSIx_GENCS_MODE_MASK        ((uint32_t)((uint32_t)0x0F << TSIx_GENCS_MODE_SHIFT))                            /*!< TSI analog modes setup and status bits (mask) */
+#define TSIx_GENCS_MODE(x)          ((uint32_t)(((uint32_t)(x) << TSIx_GENCS_MODE_SHIFT) & TSIx_GENCS_MODE_MASK))  /*!< TSI analog modes setup and status bits */
+#define TSIx_GENCS_REFCHRG_SHIFT    21                                                                                       /*!< Reference oscillator charge/discharge current (shift) */
+#define TSIx_GENCS_REFCHRG_MASK     ((uint32_t)((uint32_t)0x07 << TSIx_GENCS_REFCHRG_SHIFT))                               /*!< Reference oscillator charge/discharge current (mask) */
+#define TSIx_GENCS_REFCHRG(x)       ((uint32_t)(((uint32_t)(x) << TSIx_GENCS_REFCHRG_SHIFT) & TSIx_GENCS_REFCHRG_MASK))  /*!< Reference oscillator charge/discharge current */
+#define TSIx_GENCS_DVOLT_SHIFT      19                                                                                   /*!< Oscillator voltage rails (shift) */
+#define TSIx_GENCS_DVOLT_MASK       ((uint32_t)((uint32_t)0x03 << TSIx_GENCS_DVOLT_SHIFT))                             /*!< Oscillator voltage rails (mask) */
+#define TSIx_GENCS_DVOLT(x)         ((uint32_t)(((uint32_t)(x) << TSIx_GENCS_DVOLT_SHIFT) & TSIx_GENCS_DVOLT_MASK))  /*!< Oscillator voltage rails */
+#define TSIx_GENCS_EXTCHRG_SHIFT    16                                                                                       /*!< Electrode oscillator charge/discharge current (shift) */
+#define TSIx_GENCS_EXTCHRG_MASK     ((uint32_t)((uint32_t)0x07 << TSIx_GENCS_EXTCHRG_SHIFT))                               /*!< Electrode oscillator charge/discharge current (mask) */
+#define TSIx_GENCS_EXTCHRG(x)       ((uint32_t)(((uint32_t)(x) << TSIx_GENCS_EXTCHRG_SHIFT) & TSIx_GENCS_EXTCHRG_MASK))  /*!< Electrode oscillator charge/discharge current */
+#define TSIx_GENCS_PS_SHIFT         13                                                                             /*!< Electrode oscillator prescaler (shift) */
+#define TSIx_GENCS_PS_MASK          ((uint32_t)((uint32_t)0x07 << TSIx_GENCS_PS_SHIFT))                          /*!< Electrode oscillator prescaler (mask) */
+#define TSIx_GENCS_PS(x)            ((uint32_t)(((uint32_t)(x) << TSIx_GENCS_PS_SHIFT) & TSIx_GENCS_PS_MASK))  /*!< Electrode oscillator prescaler */
+#define TSIx_GENCS_NSCN_SHIFT       8                                                                                  /*!< Number of scans per electrode minus 1 (shift) */
+#define TSIx_GENCS_NSCN_MASK        ((uint32_t)((uint32_t)0x1F << TSIx_GENCS_NSCN_SHIFT))                            /*!< Number of scans per electrode minus 1 (mask) */
+#define TSIx_GENCS_NSCN(x)          ((uint32_t)(((uint32_t)(x) << TSIx_GENCS_NSCN_SHIFT) & TSIx_GENCS_NSCN_MASK))  /*!< Number of scans per electrode minus 1 */
+#define TSIx_GENCS_TSIEN            ((uint32_t)((uint32_t)1 << 7))  /*!< TSI Module Enable */
+#define TSIx_GENCS_TSIIEN           ((uint32_t)((uint32_t)1 << 6))  /*!< TSI Interrupt Enable */
+#define TSIx_GENCS_STPE             ((uint32_t)((uint32_t)1 << 5))  /*!< TSI STOP Enable */
+#define TSIx_GENCS_STM              ((uint32_t)((uint32_t)1 << 4))  /*!< Scan Trigger Mode (0=software; 1=hardware) */
+#define TSIx_GENCS_SCNIP            ((uint32_t)((uint32_t)1 << 3))  /*!< Scan in Progress Status */
+#define TSIx_GENCS_EOSF             ((uint32_t)((uint32_t)1 << 2))  /*!< End of Scan Flag */
+#define TSIx_GENCS_CURSW            ((uint32_t)((uint32_t)1 << 1))  /*!< Swap electrode and reference current sources */
+
+/**********  Bits definition for TSIx_DATA register  ************/
+#define TSIx_DATA_TSICH_SHIFT       28                                                                             /*!< Specify channel to be measured (shift) */
+#define TSIx_DATA_TSICH_MASK        ((uint32_t)((uint32_t)0x0F << TSIx_DATA_TSICH_SHIFT))                          /*!< Specify channel to be measured (mask) */
+#define TSIx_DATA_TSICH(x)          ((uint32_t)(((uint32_t)(x) << TSIx_DATA_TSICH_SHIFT) & TSIx_DATA_TSICH_MASK))  /*!< Specify channel to be measured */
+#define TSIx_DATA_DMAEN             ((uint32_t)((uint32_t)1 << 23))  /*!< DMA Transfer Enabled */
+#define TSIx_DATA_SWTS              ((uint32_t)((uint32_t)1 << 22))  /*!< Software Trigger Start */
+#define TSIx_DATA_TSICNT_SHIFT      0                                                                                /*!< TSI Conversion Counter Value (shift) */
+#define TSIx_DATA_TSICNT_MASK       ((uint32_t)((uint32_t)0xFFFF << TSIx_DATA_TSICNT_SHIFT))                         /*!< TSI Conversion Counter Value (mask) */
+#define TSIx_DATA_TSICNT(x)         ((uint32_t)(((uint32_t)(x) << TSIx_DATA_TSICNT_SHIFT) & TSIx_DATA_TSICNT_MASK))  /*!< TSI Conversion Counter Value */
+
+/**********  Bits definition for TSIx_TSHD register  ************/
+#define TSIx_TSHD_THRESH_SHIFT      16                                                                               /*!< TSI Wakeup Channel High-Threshold (shift) */
+#define TSIx_TSHD_THRESH_MASK       ((uint32_t)((uint32_t)0xFFFF << TSIx_TSHD_THRESH_SHIFT))                         /*!< TSI Wakeup Channel High-Threshold (mask) */
+#define TSIx_TSHD_THRESH(x)         ((uint32_t)(((uint32_t)(x) << TSIx_TSHD_THRESH_SHIFT) & TSIx_TSHD_THRESH_MASK))  /*!< TSI Wakeup Channel High-Threshold */
+#define TSIx_TSHD_THRESL_SHIFT      0                                                                                /*!< TSI Wakeup Channel Low-Threshold (shift) */
+#define TSIx_TSHD_THRESL_MASK       ((uint32_t)((uint32_t)0xFFFF << TSIx_TSHD_THRESL_SHIFT))                         /*!< TSI Wakeup Channel Low-Threshold (mask) */
+#define TSIx_TSHD_THRESL(x)         ((uint32_t)(((uint32_t)(x) << TSIx_TSHD_THRESL_SHIFT) & TSIx_TSHD_THRESL_MASK))  /*!< TSI Wakeup Channel Low-Threshold */
+
+/****************************************************************/
+/*                                                              */
+/*             Multipurpose Clock Generator (MCG)               */
+/*                                                              */
+/****************************************************************/
+/***********  Bits definition for MCG_C1 register  **************/
+#define MCG_C1_CLKS_SHIFT           6                                                           /*!< Clock source select (shift) */
+#define MCG_C1_CLKS_MASK            ((uint8_t)((uint8_t)0x03 << MCG_C1_CLKS_SHIFT))             /*!< Clock source select (mask) */
+#define MCG_C1_CLKS(x)              ((uint8_t)(((uint8_t)(x) << MCG_C1_CLKS_SHIFT) & MCG_C1_CLKS_MASK))  /*!< Clock source select */
+#define MCG_C1_CLKS_FLLPLL          MCG_C1_CLKS(0)  /*!< Select output of FLL or PLL, depending on PLLS control bit */
+#define MCG_C1_CLKS_IRCLK           MCG_C1_CLKS(1)  /*!< Select internal reference clock */
+#define MCG_C1_CLKS_ERCLK           MCG_C1_CLKS(2)  /*!< Select external reference clock */
+#define MCG_C1_FRDIV_SHIFT          3                                                           /*!< FLL External Reference Divider (shift) */
+#define MCG_C1_FRDIV_MASK           ((uint8_t)((uint8_t)0x07 << MCG_C1_FRDIV_SHIFT))            /*!< FLL External Reference Divider (mask) */
+#define MCG_C1_FRDIV(x)             ((uint8_t)(((uint8_t)(x) << MCG_C1_FRDIV_SHIFT) & MCG_C1_FRDIV_MASK))  /*!< FLL External Reference Divider */
+#define MCG_C1_IREFS                ((uint8_t)((uint8_t)1 << 2))                                /*!< Internal Reference Select (0=ERCLK; 1=slow IRCLK) */
+#define MCG_C1_IRCLKEN              ((uint8_t)((uint8_t)1 << 1))                                /*!< Internal Reference Clock Enable */
+#define MCG_C1_IREFSTEN             ((uint8_t)((uint8_t)1 << 0))                                /*!< Internal Reference Stop Enable */
+
+/***********  Bits definition for MCG_C2 register  **************/
+#define MCG_C2_LOCRE0               ((uint8_t)((uint8_t)1 << 7))                                /*!< Loss of Clock Reset Enable */
+#define MCG_C2_RANGE0_SHIFT         4                                                           /*!< Frequency Range Select (shift) */
+#define MCG_C2_RANGE0_MASK          ((uint8_t)((uint8_t)0x03 << MCG_C2_RANGE0_SHIFT))           /*!< Frequency Range Select (mask) */
+#define MCG_C2_RANGE0(x)            ((uint8_t)(((uint8_t)(x) << MCG_C2_RANGE0_SHIFT) & MCG_C2_RANGE0_MASK))  /*!< Frequency Range Select */
+#define MCG_C2_HGO0                 ((uint8_t)((uint8_t)1 << 3))                                /*!< High Gain Oscillator Select (0=low power; 1=high gain) */
+#define MCG_C2_EREFS0               ((uint8_t)((uint8_t)1 << 2))                                /*!< External Reference Select (0=clock; 1=oscillator) */
+#define MCG_C2_LP                   ((uint8_t)((uint8_t)1 << 1))                                /*!< Low Power Select (1=FLL/PLL disabled in bypass modes) */
+#define MCG_C2_IRCS                 ((uint8_t)((uint8_t)1 << 0))                                /*!< Internal Reference Clock Select (0=slow; 1=fast) */
+
+/***********  Bits definition for MCG_C3 register  **************/
+#define MCG_C3_SCTRIM_SHIFT         0                                                           /*!< Slow Internal Reference Clock Trim Setting (shift) */
+#define MCG_C3_SCTRIM_MASK          ((uint8_t)((uint8_t)0xFF << MCG_C3_SCTRIM_SHIFT))           /*!< Slow Internal Reference Clock Trim Setting (mask) */
+#define MCG_C3_SCTRIM(x)            ((uint8_t)(((uint8_t)(x) << MCG_C3_SCTRIM_SHIFT) & MCG_C3_SCTRIM_MASK))  /*!< Slow Internal Reference Clock Trim Setting */
+
+/***********  Bits definition for MCG_C4 register  **************/
+#define MCG_C4_DMX32                ((uint8_t)((uint8_t)1 << 7))                                /*!< DCO Maximum Frequency with 32.768 kHz Reference */
+#define MCG_C4_DRST_DRS_SHIFT       5                                                           /*!< DCO Range Select (shift) */
+#define MCG_C4_DRST_DRS_MASK        ((uint8_t)((uint8_t)0x03 << MCG_C4_DRST_DRS_SHIFT))         /*!< DCO Range Select (mask) */
+#define MCG_C4_DRST_DRS(x)          ((uint8_t)(((uint8_t)(x) << MCG_C4_DRST_DRS_SHIFT) & MCG_C4_DRST_DRS_MASK))  /*!< DCO Range Select */
+#define MCG_C4_FCTRIM_SHIFT         1                                                           /*!< Fast Internal Reference Clock Trim Setting (shift) */
+#define MCG_C4_FCTRIM_MASK          ((uint8_t)((uint8_t)0x0F << MCG_C4_FCTRIM_SHIFT))           /*!< Fast Internal Reference Clock Trim Setting (mask) */
+#define MCG_C4_FCTRIM(x)            ((uint8_t)(((uint8_t)(x) << MCG_C4_FCTRIM_SHIFT) & MCG_C4_FCTRIM_MASK))  /*!< Fast Internal Reference Clock Trim Setting */
+#define MCG_C4_SCFTRIM              ((uint8_t)((uint8_t)1 << 0))                                /*!< Slow Internal Reference Clock Fine Trim */
+
+/***********  Bits definition for MCG_C5 register  **************/
+#define MCG_C5_PLLCLKEN0            ((uint8_t)((uint8_t)1 << 6))                                /*!< PLL Clock Enable */
+#define MCG_C5_PLLSTEN0             ((uint8_t)((uint8_t)1 << 5))                                /*!< PLL Stop Enable */
+#define MCG_C5_PRDIV0_SHIFT         0                                                           /*!< PLL External Reference Divider (shift) */
+#define MCG_C5_PRDIV0_MASK          ((uint8_t)((uint8_t)0x1F << MCG_C5_PRDIV0_SHIFT))           /*!< PLL External Reference Divider (mask) */
+#define MCG_C5_PRDIV0(x)            ((uint8_t)(((uint8_t)(x) << MCG_C5_PRDIV0_SHIFT) & MCG_C5_PRDIV0_MASK))  /*!< PLL External Reference Divider */
+
+/***********  Bits definition for MCG_C6 register  **************/
+#define MCG_C6_LOLIE0               ((uint8_t)((uint8_t)1 << 7))                                /*!< Loss of Lock Interrupt Enable */
+#define MCG_C6_PLLS                 ((uint8_t)((uint8_t)1 << 6))                                /*!< PLL Select */
+#define MCG_C6_CME0                 ((uint8_t)((uint8_t)1 << 5))                                /*!< Clock Monitor Enable */
+#define MCG_C6_VDIV0_SHIFT          0                                                           /*!< VCO 0 Divider (shift) */
+#define MCG_C6_VDIV0_MASK           ((uint8_t)((uint8_t)0x1F << MCG_C6_VDIV0_SHIFT))            /*!< VCO 0 Divider (mask) */
+#define MCG_C6_VDIV0(x)             ((uint8_t)(((uint8_t)(x) << MCG_C6_VDIV0_SHIFT) & MCG_C6_VDIV0_MASK))  /*!< VCO 0 Divider */
+
+/************  Bits definition for MCG_S register  **************/
+#define MCG_S_LOLS                  ((uint8_t)((uint8_t)1 << 7))                                /*!< Loss of Lock Status */
+#define MCG_S_LOCK0                 ((uint8_t)((uint8_t)1 << 6))                                /*!< Lock Status */
+#define MCG_S_PLLST                 ((uint8_t)((uint8_t)1 << 5))                                /*!< PLL Select Status */
+#define MCG_S_IREFST                ((uint8_t)((uint8_t)1 << 4))                                /*!< Internal Reference Status */
+#define MCG_S_CLKST_SHIFT           2                                                           /*!< Clock Mode Status (shift) */
+#define MCG_S_CLKST_MASK            ((uint8_t)((uint8_t)0x03 << MCG_S_CLKST_SHIFT))             /*!< Clock Mode Status (mask) */
+#define MCG_S_CLKST(x)              ((uint8_t)(((uint8_t)(x) << MCG_S_CLKST_SHIFT) & MCG_S_CLKST_MASK))  /*!< Clock Mode Status */
+#define MCG_S_CLKST_FLL             MCG_S_CLKST(0)   /*!< Output of the FLL is selected */
+#define MCG_S_CLKST_IRCLK           MCG_S_CLKST(1)   /*!< Internal reference clock is selected */
+#define MCG_S_CLKST_ERCLK           MCG_S_CLKST(2)   /*!< External reference clock is selected */
+#define MCG_S_CLKST_PLL             MCG_S_CLKST(3)   /*!< Output of the PLL is selected */
+#define MCG_S_OSCINIT0              ((uint8_t)((uint8_t)1 << 1))                                /*!< OSC Initialization */
+#define MCG_S_IRCST                 ((uint8_t)((uint8_t)1 << 0))                                /*!< Internal Reference Clock Status */
+
+/************  Bits definition for MCG_SC register  **************/
+#define MCG_SC_ATME                 ((uint8_t)((uint8_t)1 << 7))                                /*!< Automatic Trim Machine Enable */
+#define MCG_SC_ATMS                 ((uint8_t)((uint8_t)1 << 6))                                /*!< Automatic Trim Machine Select */
+#define MCG_SC_ATMF                 ((uint8_t)((uint8_t)1 << 5))                                /*!< Automatic Trim Machine Fail Flag */
+#define MCG_SC_FLTPRSRV             ((uint8_t)((uint8_t)1 << 4)                                 /*!< FLL Filter Preserve Enable */
+#define MCG_SC_FCRDIV_SHIFT         1                                                           /*!< Fast Clock Internal Reference Divider (shift) */
+#define MCG_SC_FCRDIV_MASK          ((uint8_t)((uint8_t)0x07 << MCG_SC_FCRDIV_SHIFT))           /*!< Fast Clock Internal Reference Divider (mask) */
+#define MCG_SC_FCRDIV(x)            ((uint8_t)(((uint8_t)(x) << MCG_SC_FCRDIV_SHIFT) & MCG_SC_FCRDIV_MASK))  /*!< Fast Clock Internal Reference Divider */
+#define MCG_SC_FCRDIV_DIV1          MCG_SC_FCRDIV(0)  /*!< Divide Factor is 1 */
+#define MCG_SC_FCRDIV_DIV2          MCG_SC_FCRDIV(1)  /*!< Divide Factor is 2 */
+#define MCG_SC_FCRDIV_DIV4          MCG_SC_FCRDIV(2)  /*!< Divide Factor is 4 */
+#define MCG_SC_FCRDIV_DIV8          MCG_SC_FCRDIV(3)  /*!< Divide Factor is 8 */
+#define MCG_SC_FCRDIV_DIV16         MCG_SC_FCRDIV(4)  /*!< Divide Factor is 16 */
+#define MCG_SC_FCRDIV_DIV32         MCG_SC_FCRDIV(5)  /*!< Divide Factor is 32 */
+#define MCG_SC_FCRDIV_DIV64         MCG_SC_FCRDIV(6)  /*!< Divide Factor is 64 */
+#define MCG_SC_FCRDIV_DIV128        MCG_SC_FCRDIV(7)  /*!< Divide Factor is 128 */
+#define MCG_SC_LOCS0                ((uint8_t)((uint8_t)1 << 0)                                 /*!< OSC0 Loss of Clock Status */
+
+/***********  Bits definition for MCG_ATCVH register  ************/
+#define MCG_ATCVH_ATCVH_SHIFT       0                                                           /*!< MCG Auto Trim Compare Value High Register (shift) */
+#define MCG_ATCVH_ATCVH_MASK        ((uint8_t)((uint8_t)0xFF << MCG_ATCVH_ATCVH_SHIFT))         /*!< MCG Auto Trim Compare Value High Register (mask) */
+#define MCG_ATCVH_ATCVH(x)          ((uint8_t)(((uint8_t)(x) << MCG_ATCVH_ATCVH_SHIFT) & MCG_ATCVH_ATCVH_MASK))  /*!< MCG Auto Trim Compare Value High Register */
+
+/***********  Bits definition for MCG_ATCVL register  ************/
+#define MCG_ATCVL_ATCVL_SHIFT       0                                                           /*!< MCG Auto Trim Compare Value Low Register (shift) */
+#define MCG_ATCVL_ATCVL_MASK        ((uint8_t)((uint8_t)0xFF << MCG_ATCVL_ATCVL_SHIFT))         /*!< MCG Auto Trim Compare Value Low Register (mask) */
+#define MCG_ATCVL_ATCVL(x)          ((uint8_t)(((uint8_t)(x) << MCG_ATCVL_ATCVL_SHIFT) & MCG_ATCVL_ATCVL_MASK))  /*!< MCG Auto Trim Compare Value Low Register */
+
+/************  Bits definition for MCG_C7 register  **************/
+/* All MCG_C7 bits are reserved on the KL25Z. */
+
+/************  Bits definition for MCG_C8 register  **************/
+#define MCG_C8_LOLRE                ((uint8_t)((uint8_t)1 << 6))                                /*!< PLL Loss of Lock Reset Enable */
+
+/************  Bits definition for MCG_C9 register  **************/
+/* All MCG_C9 bits are reserved on the KL25Z. */
+
+/************  Bits definition for MCG_C10 register  *************/
+/* All MCG_C10 bits are reserved on the KL25Z. */
+
 
 /****************************************************************/
 /*                                                              */

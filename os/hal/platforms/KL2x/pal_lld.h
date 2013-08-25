@@ -41,9 +41,6 @@
 #define PAL_MODE_ALTERNATIVE_6      0x15
 #define PAL_MODE_ALTERNATIVE_7      0x16
 
-#define PIN_MUX_ALTERNATIVE(x) \
-    (((uint32_t) (x) << PORTx_PRCn_MUX_SHIFT) & PORTx_PRCn_MUX)
-
 /*===========================================================================*/
 /* I/O Ports Types and constants.                                            */
 /*===========================================================================*/
