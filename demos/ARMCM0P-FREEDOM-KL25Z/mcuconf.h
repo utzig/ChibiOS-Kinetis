@@ -35,6 +35,12 @@
  */
 
 /*
+ * I2C driver system settings.
+ */
+#define KINETIS_I2C_USE_I2C0                  FALSE
+#define KINETIS_I2C_USE_I2C1                  FALSE
+
+/*
  * SERIAL driver system settings.
  */
 #define KINETIS_SERIAL_USE_UART0              TRUE
