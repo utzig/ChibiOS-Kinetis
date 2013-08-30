@@ -136,52 +136,56 @@ void kl2x_clock_init(void)
           MCG_C1_FRDIV(3);     /* Divide ERCLK / 256 for FLL reference. */
   /* Note: FLL reference frequency must be 31.25 kHz to 39.0625 kHz.
      8 MHz / 256 = 31.25 kHz. */
-  /* TODO[CDB] move the waits from step (3) here per the RM */
   MCG->C4 &= ~(MCG_C4_DMX32 | MCG_C4_DRST_DRS_MASK);
-  MCG->C5 = MCG_C5_PRDIV0(1);  /* PLL External Reference Divide by 2 */
   MCG->C6 = 0;  /* PLLS=0: Select FLL as MCG source, not PLL */
 
   /* (3) Once configuration is set, wait for MCG mode change. */
 
-  /* TODO per RM 24.5.31 (1)(c) Loop until S[OSCINIT0] is 1, indicating the crystal selected by C2[EREFS0] has been initialized. */
-  /* TODO per RM 24.5.31 (1)(d) Loop until S[IREFST] is 0, indicating the external reference is the current reference clock source. */
-  /* TODO per RM 24.5.31 (1)(e) Loop until S[CLKST] is 2'b10, indicating the external reference clock is selected to feed MCGOUTCLK. */
-  /* TODO per RM 24.5.31 (2)    Then configure C5[PRDIV0] to generate the correct PLL reference frequency. */
-  /* TODO per RM 24.5.31 (3)    Then from FBE transition to PBE mode. */
-  /* TODO per RM 24.5.31 (3)(b) C6[PLLS]=1 to select PLL. */
-  /* TODO per RM 24.5.31 (3)(b) C6[VDIV0]=5'b0000 (x24) 2 MHz * 24 = 48 MHz. */
-  /* TODO per RM 24.5.31 (3)(d) Loop until S[PLLST], indicating PLL is the PLLS clock source. */
-  /* TODO per RM 24.5.31 (3)(e) Loop until S[LOCK0] is set, indicating the PLL has acquired lock. */
-  /* TODO per RM 24.5.31 (4)    Transition from PBE mode to PEE mode. */
-  /* TODO per RM 24.5.31 (4)(a) C1[CLKS] = 2'b00 to select PLL output as system clock source. */
-  /* TODO per RM 24.5.31 (4)(b) Loop until S[CLKST] are 2'b11, indicating the PLL output is selected for MCGOUTCLK. */
-
-  /* Check that the source of the FLL reference clock is
-     the external reference clock. */
+  /* From KL25P80M48SF0RM section 24.5.31: */
+  /* (1)(c) Loop until S[OSCINIT0] is 1, indicating the
+     crystal selected by C2[EREFS0] has been initialized. */
+  while ((MCG->S & MCG_S_OSCINIT0) == 0)
+    ;
+  /* (1)(d) Loop until S[IREFST] is 0, indicating the
+     external reference is the current reference clock source. */
   while ((MCG->S & MCG_S_IREFST) != 0)
-    ;
-
-  /* Wait until external reference clock has been selected. */
+    ;  /* Wait until external reference clock is FLL reference. */
+  /* (1)(e) Loop until S[CLKST] is 2'b10, indicating
+     the external reference clock is selected to feed MCGOUTCLK. */
   while ((MCG->S & MCG_S_CLKST_MASK) != MCG_S_CLKST_ERCLK)
-    ;
+    ;  /* Wait until external reference clock has been selected. */
 
   /* --- MCG mode: FBE (FLL bypassed, external crystal) ---
      Now the MCG is in FBE mode.
      Although the FLL is bypassed, it is still on. */
 
-  /* PLL selected as MCG source. VDIV0=00000 (Multiply=24). */
+  /* (2)    Then configure C5[PRDIV0] to generate the
+     correct PLL reference frequency. */
+  MCG->C5 = MCG_C5_PRDIV0(1);  /* PLL External Reference Divide by 2 */
+  /* (3)    Then from FBE transition to PBE mode. */
+  /* (3)(b) C6[PLLS]=1 to select PLL. */
+  /* (3)(b) C6[VDIV0]=5'b0000 (x24) 2 MHz * 24 = 48 MHz. */
   MCG->C6 = MCG_C6_PLLS | MCG_C6_VDIV0(0);
-  while ((MCG->S & MCG_S_LOCK0) == 0)  /* wait until PLL locked */
-    ;
+  /* (3)(d) Loop until S[PLLST], indicating PLL
+     is the PLLS clock source. */
+  while ((MCG->S & MCG_S_PLLST) == 0)
+    ;  /* wait until PLL is the PLLS clock source. */
+  /* (3)(e) Loop until S[LOCK0] is set, indicating the PLL has acquired lock. */
+  /* PLL selected as MCG source. VDIV0=00000 (Multiply=24). */
+  while ((MCG->S & MCG_S_LOCK0) == 0)
+    ;  /* wait until PLL locked */
 
   /* --- MCG mode: PBE (PLL bypassed, external crystal) --- */
 
+  /* (4)    Transition from PBE mode to PEE mode. */
+  /* (4)(a) C1[CLKS] = 2'b00 to select PLL output as system clock source. */
   // Switch to PEE mode
   //    Select PLL output (CLKS=0)
   //    FLL external reference divider (FRDIV=3)
   //    External reference clock for FLL (IREFS=0)
   MCG->C1 = MCG_C1_CLKS(0) |
             MCG_C1_FRDIV(3);
+  /* (4)(b) Loop until S[CLKST] are 2'b11, indicating the PLL output is selected for MCGOUTCLK. */
   while ((MCG->S & MCG_S_CLKST_MASK) != MCG_S_CLKST_PLL)
     ;  /* wait until clock switched to PLL output */
 
