@@ -173,8 +173,7 @@ static void configure_uart(UARTLP_TypeDef *uart, const SerialConfig *config)
   }
 
   /* FIXME: change fixed OSR = 16 to dynamic value based on baud */
-  /* FIXME: move all occurences of clock to board.h */
-  uint16_t divisor = (48000000 / 16) / config->sc_speed;
+  uint16_t divisor = (KINETIS_SYSCLK_FREQUENCY / 16) / config->sc_speed;
   uart->C4 = UARTx_C4_OSR & (16 - 1);
   uart->BDH = (divisor >> 8) & UARTx_BDH_SBR;
   uart->BDL = (divisor & UARTx_BDL_SBR);

@@ -57,7 +57,7 @@
 void hal_lld_init(void)
 {
   nvicSetSystemHandlerPriority(HANDLER_SYSTICK, CORTEX_PRIORITY_SYSTICK);
-  SysTick->LOAD = CPU_FREQUENCY / CH_FREQUENCY - 1;
+  SysTick->LOAD = KINETIS_SYSCLK_FREQUENCY / CH_FREQUENCY - 1;
   SysTick->VAL = 0;
   SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk |
                   SysTick_CTRL_ENABLE_Msk |

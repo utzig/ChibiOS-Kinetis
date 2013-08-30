@@ -92,6 +92,13 @@
 #define KINETIS_MCG_MODE            KINETIS_MCG_MODE_PEE
 #endif
 
+/**
+ * @brief   MCU system/core clock frequency.
+ */
+#if !defined(KINETIS_SYSCLK_FREQUENCY) || defined(__DOXYGEN__)
+#define KINETIS_SYSCLK_FREQUENCY    48000000UL
+#endif
+
 /** @} */
 
 /*===========================================================================*/
