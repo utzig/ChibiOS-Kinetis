@@ -80,7 +80,12 @@ void kl2x_clock_init(void)
   /* Enable PORTA */
   SIM->SCGC5 |= SIM_SCGC5_PORTA;
 
-  /* --- MCG mode: FEI (default out of reset) --- */
+  /* --- MCG mode: FEI (default out of reset) ---
+     f_MCGOUTCLK = f_int * F
+     F is the FLL factor selected by C4[DRST_DRS] and C4[DMX32] bits.
+     Typical f_MCGOUTCLK = 21 MHz immediately after reset.
+     C4[DMX32]=0 and C4[DRST_DRS]=00  =>  FLL factor=640.
+     C3[SCTRIM] and C4[SCFTRIM] factory trim values apply to f_int. */
 
   /* The MCGOUTCLK is divided by OUTDIV1 and OUTDIV4:
    * OUTDIV1 (divider for core/system and bus/flash clock)
@@ -92,7 +97,10 @@ void kl2x_clock_init(void)
   /* System oscillator drives 32 kHz clock (OSC32KSEL=0) */
   SIM->SOPT1 &= ~SIM_SOPT1_OSC32KSEL_MASK;
 
-#if KINETIS_MCG_MODE == KINETIS_MCG_MODE_PEE
+#if KINETIS_MCG_MODE == KINETIS_MCG_MODE_FEI
+  /* Do nothing, this is the default mode at reset. */
+
+#elif KINETIS_MCG_MODE == KINETIS_MCG_MODE_PEE
   /*
    * PLL Enabled External (PEE) MCG Mode
    * 48 MHz core, 24 MHz bus - using 8 MHz crystal with PLL.

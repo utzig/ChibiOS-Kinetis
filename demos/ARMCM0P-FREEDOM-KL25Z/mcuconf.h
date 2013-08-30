@@ -34,6 +34,12 @@
  * HAL driver system settings.
  */
 
+/* FEI mode */
+#if 0
+#define KINETIS_MCG_MODE            KINETIS_MCG_MODE_FEI
+#define KINETIS_SYSCLK_FREQUENCY    21000000UL
+#endif /* 0 */
+
 /*
  * I2C driver system settings.
  */
