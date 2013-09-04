@@ -126,8 +126,12 @@ void kl2x_clock_init(void)
 
   /* From KL25P80M48SF0RM section 24.5.1.1 "Initializing the MCG". */
   /* To change from FEI mode to FBE mode: */
-  /* (1) Select the external clock source in C2 register. */
-  MCG->C2 = /* TODO[CDB] should we set HGO0 for high-gain xtal osc in PEE mode? [see KL25P80M48SF0RM sec 24.5.3.1] */
+  /* (1) Select the external clock source in C2 register.
+         Use low-power OSC mode (HGO0=0) which enables internal feedback
+         resistor since FRDM-KL25Z has feedback resistor R25 unpopulated.
+         Use high-gain mode by setting C2[HGO0] instead if external
+         feedback resistor Rf is installed.  */
+  MCG->C2 =
           MCG_C2_RANGE0(2) |  /* very high frequency range */
           MCG_C2_EREFS0;      /* external reference (using a crystal) */
   /* (2) Write to C1 to select the clock mode. */
