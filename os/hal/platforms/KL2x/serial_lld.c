@@ -165,6 +165,8 @@ static void notify3(GenericQueue *qp)
  */
 static void configure_uart(UARTLP_TypeDef *uart, const SerialConfig *config)
 {
+  uint32_t uart_clock;
+
   uart->C1 = 0;
   uart->C3 = UARTx_C3_ORIE | UARTx_C3_NEIE | UARTx_C3_FEIE | UARTx_C3_PEIE;
   uart->S1 = UARTx_S1_IDLE | UARTx_S1_OR | UARTx_S1_NF | UARTx_S1_FE | UARTx_S1_PF;
@@ -172,8 +174,25 @@ static void configure_uart(UARTLP_TypeDef *uart, const SerialConfig *config)
     (void)uart->D;
   }
 
+#if KINETIS_SERIAL_USE_UART0
+    if (uart == UART0) {
+        /* UART0 can be clocked from several sources. */
+        uart_clock = KINETIS_UART0_CLOCK_FREQ;
+    }
+#endif
+#if KINETIS_SERIAL_USE_UART1
+    if (uart == UART1) {
+        uart_clock = KINETIS_BUSCLK_FREQUENCY;
+    }
+#endif
+#if KINETIS_SERIAL_USE_UART2
+    if (uart == UART2) {
+        uart_clock = KINETIS_BUSCLK_FREQUENCY;
+    }
+#endif
+
   /* FIXME: change fixed OSR = 16 to dynamic value based on baud */
-  uint16_t divisor = (KINETIS_SYSCLK_FREQUENCY / 16) / config->sc_speed;
+  uint16_t divisor = (uart_clock / 16) / config->sc_speed;
   uart->C4 = UARTx_C4_OSR & (16 - 1);
   uart->BDH = (divisor >> 8) & UARTx_BDH_SBR;
   uart->BDL = (divisor & UARTx_BDL_SBR);
@@ -265,7 +284,7 @@ void sd_lld_start(SerialDriver *sdp, const SerialConfig *config) {
       SIM->SCGC4 |= SIM_SCGC4_UART0;
       SIM->SOPT2 =
               (SIM->SOPT2 & ~SIM_SOPT2_UART0SRC_MASK) |
-              SIM_SOPT2_UART0SRC(1);
+              SIM_SOPT2_UART0SRC(KINETIS_UART0_CLOCK_SRC);
       configure_uart(sdp->uart, config);
       nvicEnableVector(UART0_IRQn, CORTEX_PRIORITY_MASK(KINETIS_SERIAL_UART0_PRIORITY));
     }

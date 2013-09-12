@@ -93,10 +93,78 @@
 #endif
 
 /**
+ * @brief   Clock divider for core/system and bus/flash clocks (OUTDIV1).
+ * @note    The allowed range is 1...16.
+ * @note    The default value is calculated for a 48 MHz system clock
+ *          from a 96 MHz PLL output.
+ */
+#if !defined(KINETIS_MCG_FLL_OUTDIV1) || defined(__DOXYGEN__)
+#define KINETIS_MCG_FLL_OUTDIV1     2
+#endif
+
+/**
+ * @brief   Additional clock divider bus/flash clocks (OUTDIV4).
+ * @note    The allowed range is 1...8.
+ * @note    This divider is on top of the OUTDIV1 divider.
+ * @note    The default value is calculated for 24 MHz bus/flash clocks
+ *          from a 96 MHz PLL output and 48 MHz core/system clock.
+ */
+#if !defined(KINETIS_MCG_FLL_OUTDIV4) || defined(__DOXYGEN__)
+#define KINETIS_MCG_FLL_OUTDIV4     2
+#endif
+
+/**
+ * @brief   FLL DCO tuning enable for 32.768 kHz reference.
+ * @note    Set to 1 for fine-tuning DCO for maximum frequency with
+ *          a 32.768 kHz reference.
+ * @note    The default value is for a 32.768 kHz external crystal.
+ */
+#if !defined(KINETIS_MCG_FLL_DMX32) || defined(__DOXYGEN__)
+#define KINETIS_MCG_FLL_DMX32       1
+#endif
+
+/**
+ * @brief   FLL DCO range selection.
+ * @note    The allowed range is 0...3.
+ * @note    The default value is calculated for 48 MHz FLL output
+ *          from a 32.768 kHz external crystal.
+ *          (DMX32 && DRST_DRS=1 => F=1464; 32.768 kHz * F ~= 48 MHz.)
+ *
+ */
+#if !defined(KINETIS_MCG_FLL_DRS) || defined(__DOXYGEN__)
+#define KINETIS_MCG_FLL_DRS         2
+#endif
+
+/**
  * @brief   MCU system/core clock frequency.
  */
 #if !defined(KINETIS_SYSCLK_FREQUENCY) || defined(__DOXYGEN__)
 #define KINETIS_SYSCLK_FREQUENCY    48000000UL
+#endif
+
+/**
+ * @brief   MCU bus/flash clock frequency.
+ */
+#if !defined(KINETIS_BUSCLK_FREQUENCY) || defined(__DOXYGEN__)
+#define KINETIS_BUSCLK_FREQUENCY    (KINETIS_SYSCLK_FREQUENCY / KINETIS_MCG_FLL_OUTDIV4)
+#endif
+
+/**
+ * @brief   UART0 clock frequency.
+ * @note    The default value is based on 96 MHz PLL/2 source.
+ *          If you use a different source, such as the FLL,
+ *          you must set this properly.
+ */
+#if !defined(KINETIS_UART0_CLOCK_FREQ) || defined(__DOXYGEN__)
+#define KINETIS_UART0_CLOCK_FREQ    KINETIS_SYSCLK_FREQUENCY
+#endif
+
+/**
+ * @brief   UART0 clock source.
+ * @note    The default value is to use PLL/2 or FLL source.
+ */
+#if !defined(KINETIS_UART0_CLOCK_SRC) || defined(__DOXYGEN__)
+#define KINETIS_UART0_CLOCK_SRC     1
 #endif
 
 /** @} */
@@ -104,6 +172,40 @@
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+#if !defined(KINETIS_SYSCLK_FREQUENCY)
+#error KINETIS_SYSCLK_FREQUENCY must be defined
+#endif
+
+#if KINETIS_SYSCLK_FREQUENCY <= 0 || KINETIS_SYSCLK_FREQUENCY > KINETIS_SYSCLK_MAX
+#error KINETIS_SYSCLK_FREQUENCY out of range
+#endif
+
+#if !defined(KINETIS_BUSCLK_FREQUENCY)
+#error KINETIS_BUSCLK_FREQUENCY must be defined
+#endif
+
+#if KINETIS_BUSCLK_FREQUENCY <= 0 || KINETIS_BUSCLK_FREQUENCY > KINETIS_BUSCLK_MAX
+#error KINETIS_BUSCLK_FREQUENCY out of range
+#endif
+
+#if !(defined(KINETIS_MCG_FLL_OUTDIV1) && \
+      KINETIS_MCG_FLL_OUTDIV1 >= 1 && KINETIS_MCG_FLL_OUTDIV1 <= 16)
+#error KINETIS_MCG_FLL_OUTDIV1 must be 1 through 16
+#endif
+
+#if !(defined(KINETIS_MCG_FLL_OUTDIV4) && \
+      KINETIS_MCG_FLL_OUTDIV4 >= 1 && KINETIS_MCG_FLL_OUTDIV4 <= 8)
+#error KINETIS_MCG_FLL_OUTDIV4 must be 1 through 8
+#endif
+
+#if !(KINETIS_MCG_FLL_DMX32 == 0 || KINETIS_MCG_FLL_DMX32 == 1)
+#error Invalid KINETIS_MCG_FLL_DMX32 value, must be 0 or 1
+#endif
+
+#if !(0 <= KINETIS_MCG_FLL_DRS && KINETIS_MCG_FLL_DRS <= 3)
+#error Invalid KINETIS_MCG_FLL_DRS value, must be 0...3
+#endif
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */

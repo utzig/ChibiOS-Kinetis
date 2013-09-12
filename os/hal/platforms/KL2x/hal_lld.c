@@ -87,18 +87,83 @@ void kl2x_clock_init(void)
      C4[DMX32]=0 and C4[DRST_DRS]=00  =>  FLL factor=640.
      C3[SCTRIM] and C4[SCFTRIM] factory trim values apply to f_int. */
 
+  /* System oscillator drives 32 kHz clock (OSC32KSEL=0) */
+  SIM->SOPT1 &= ~SIM_SOPT1_OSC32KSEL_MASK;
+
+  #if KINETIS_MCG_MODE == KINETIS_MCG_MODE_FEI
+  /* This is the default mode at reset. */
   /* The MCGOUTCLK is divided by OUTDIV1 and OUTDIV4:
    * OUTDIV1 (divider for core/system and bus/flash clock)
    * OUTDIV4 (additional divider for bus/flash clock) */
   SIM->CLKDIV1 =
-		  SIM_CLKDIV1_OUTDIV1(1) |  /* OUTDIV1 = divide-by-2 */
-		  SIM_CLKDIV1_OUTDIV4(1);   /* OUTDIV4 = divide-by-2 */
+          SIM_CLKDIV1_OUTDIV1(1) |  /* OUTDIV1 = divide-by-2 => 24 MHz */
+          SIM_CLKDIV1_OUTDIV4(0);   /* OUTDIV4 = divide-by-1 => 24 MHz */
 
-  /* System oscillator drives 32 kHz clock (OSC32KSEL=0) */
-  SIM->SOPT1 &= ~SIM_SOPT1_OSC32KSEL_MASK;
+#elif KINETIS_MCG_MODE == KINETIS_MCG_MODE_FEE
+  /*
+   * FLL Enabled External (FEE) MCG Mode
+   * 24 MHz core, 12 MHz bus - using 32.768 kHz crystal with FLL.
+   * f_MCGOUTCLK = (f_ext / FLL_R) * F
+   *             = (32.768 kHz ) *
+   *  FLL_R is the reference divider selected by C1[FRDIV]
+   *  F is the FLL factor selected by C4[DRST_DRS] and C4[DMX32].
+   *
+   * Then the core/system and bus/flash clocks are divided:
+   *   f_SYS = f_MCGOUTCLK / OUTDIV1 = 48 MHz / 1 = 48 MHz
+   *   f_BUS = f_MCGOUTCLK / OUTDIV1 / OUTDIV4 =  MHz / 4 = 24 MHz
+   */
 
-#if KINETIS_MCG_MODE == KINETIS_MCG_MODE_FEI
-  /* Do nothing, this is the default mode at reset. */
+  SIM->SOPT2 =
+          SIM_SOPT2_TPMSRC(1);  /* MCGFLLCLK clock or MCGPLLCLK/2 */
+          /* PLLFLLSEL=0 -> MCGFLLCLK */
+
+  /* The MCGOUTCLK is divided by OUTDIV1 and OUTDIV4:
+   * OUTDIV1 (divider for core/system and bus/flash clock)
+   * OUTDIV4 (additional divider for bus/flash clock) */
+  SIM->CLKDIV1 =
+          SIM_CLKDIV1_OUTDIV1(KINETIS_MCG_FLL_OUTDIV1 - 1) |
+          SIM_CLKDIV1_OUTDIV4(KINETIS_MCG_FLL_OUTDIV4 - 1);
+
+  /* EXTAL0 and XTAL0 */
+  PORTA->PCR[18] &= ~0x01000700; /* Set PA18 to analog (default) */
+  PORTA->PCR[19] &= ~0x01000700; /* Set PA19 to analog (default) */
+
+  OSC0->CR = 0;
+
+  /* From KL25P80M48SF0RM section 24.5.1.1 "Initializing the MCG". */
+  /* To change from FEI mode to FEE mode: */
+  /* (1) Select the external clock source in C2 register.
+         Use low-power OSC mode (HGO0=0) which enables internal feedback
+         resistor, for 32.768 kHz crystal configuration.  */
+  MCG->C2 =
+          MCG_C2_RANGE0(0) |  /* low frequency range (<= 40 kHz) */
+          MCG_C2_EREFS0;      /* external reference (using a crystal) */
+  /* (2) Write to C1 to select the clock mode. */
+  MCG->C1 = /* Clear the IREFS bit to switch to the external reference. */
+          MCG_C1_CLKS_FLLPLL |  /* Use FLL for system clock, MCGCLKOUT. */
+          MCG_C1_FRDIV(0);      /* Don't divide 32kHz ERCLK FLL reference. */
+  MCG->C6 = 0;  /* PLLS=0: Select FLL as MCG source, not PLL */
+
+  /* Loop until S[OSCINIT0] is 1, indicating the
+     crystal selected by C2[EREFS0] has been initialized. */
+  while ((MCG->S & MCG_S_OSCINIT0) == 0)
+    ;
+  /* Loop until S[IREFST] is 0, indicating the
+     external reference is the current reference clock source. */
+  while ((MCG->S & MCG_S_IREFST) != 0)
+    ;  /* Wait until external reference clock is FLL reference. */
+  /* (1)(e) Loop until S[CLKST] indicates FLL feeds MCGOUTCLK. */
+  while ((MCG->S & MCG_S_CLKST_MASK) != MCG_S_CLKST_FLL)
+    ;  /* Wait until FLL has been selected. */
+
+  /* --- MCG mode: FEE --- */
+  /* Set frequency range for DCO output (MCGFLLCLK). */
+  MCG->C4 = (KINETIS_MCG_FLL_DMX32 ? MCG_C4_DMX32 : 0) |
+            MCG_C4_DRST_DRS(KINETIS_MCG_FLL_DRS);
+
+  /* Wait for the FLL lock time; t[fll_acquire][max] = 1 ms */
+  /* TODO - not implemented - is it required? Freescale example code
+     seems to omit it. */
 
 #elif KINETIS_MCG_MODE == KINETIS_MCG_MODE_PEE
   /*
@@ -113,6 +178,13 @@ void kl2x_clock_init(void)
    *   f_SYS = f_MCGOUTCLK / OUTDIV1 = 96 MHz / 2 = 48 MHz
    *   f_BUS = f_MCGOUTCLK / OUTDIV1 / OUTDIV4 = 96 MHz / 4 = 24 MHz
    */
+
+  /* The MCGOUTCLK is divided by OUTDIV1 and OUTDIV4:
+   * OUTDIV1 (divider for core/system and bus/flash clock)
+   * OUTDIV4 (additional divider for bus/flash clock) */
+  SIM->CLKDIV1 =
+          SIM_CLKDIV1_OUTDIV1(1) |  /* OUTDIV1 = divide-by-2 => 48 MHz */
+          SIM_CLKDIV1_OUTDIV4(1);   /* OUTDIV4 = divide-by-2 => 24 MHz */
 
   SIM->SOPT2 =
           SIM_SOPT2_TPMSRC(1) | /* MCGFLLCLK clock or MCGPLLCLK/2 */
